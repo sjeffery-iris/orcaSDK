@@ -10,7 +10,7 @@ namespace orcaSDK
  *	@brief		Writes to a register and blocks the current thread until a read register matches a given value.
  *	@param	confirm_register_value	The value that the register in confirm_register_address should have for the command to have been considered a success
 */
-[[nodiscard("Ignored failure here will usually lead to an invalid application state")]]
+//[[nodiscard("Ignored failure here will usually lead to an invalid application state")]]
 bool command_and_confirm(
 	Actuator& motor, 
 	uint16_t command_register_address, uint16_t command_register_value, 
@@ -27,7 +27,7 @@ bool command_and_confirm(
  *	@param	confirm_register_address	The register that should be read from for confirmation
  *	@param	success_function			The function that must return true for the command to have been considered a success
 */
-[[nodiscard("Ignored failure here will usually lead to an invalid application state")]]
+//[[nodiscard("Ignored failure here will usually lead to an invalid application state")]]
 bool command_and_confirm(
 	Actuator& motor, 
 	uint16_t command_register_address, uint16_t command_register_value, 

@@ -1,13 +1,13 @@
 // TODO (Aiden Dec 20, 2024): Remove when making cross-platform
-#include "src/SerialASIO.h" 
+//#include "src/SerialASIO.h"
 #undef max
 #undef min
 #include "orca600_api/orca600.h"
 #include "../actuator.h"
-#include "chrono_clock.h"
+//#include "chrono_clock.h"
 #include "standard_modbus_functions.h"
-#include "tools/log.h"
-#include "command_and_confirm.h"
+//#include "tools/log.h"
+//#include "command_and_confirm.h"
 #include <limits>
 
 namespace orcaSDK {
@@ -18,17 +18,17 @@ int32_t combine_into_wide_register(uint16_t low_reg_value, uint16_t high_reg_val
 }
 
 //Constructor
-Actuator::Actuator(
-	const char* name,
-	uint8_t modbus_server_address
-) :
-	Actuator(
-		std::make_shared<SerialASIO>(),
-		std::make_shared<ChronoClock>(),
-		name,
-		modbus_server_address
-	)
-{}
+//Actuator::Actuator(
+//	const char* name,
+//	uint8_t modbus_server_address
+//) :
+//	Actuator(
+//		std::make_shared<SerialASIO>(),
+//		std::make_shared<ChronoClock>(),
+//		name,
+//		modbus_server_address
+//	)
+//{}
 
 Actuator::Actuator(
 	std::shared_ptr<SerialInterface> serial_interface,
@@ -64,9 +64,9 @@ void Actuator::close_serial_port() {
 }
 
 OrcaError Actuator::set_mode(MotorMode orca_mode) {
-	bool command_success = command_and_confirm(*this, CTRL_REG_3, (uint16_t)orca_mode, MODE_OF_OPERATION, (uint16_t)orca_mode);
-	if (!command_success) return OrcaError{ true, "Failed to set mode within 25ms!"};
-	stream.update_motor_mode(orca_mode);
+//	bool command_success = command_and_confirm(*this, CTRL_REG_3, (uint16_t)orca_mode, MODE_OF_OPERATION, (uint16_t)orca_mode);
+//	if (!command_success) return OrcaError{ true, "Failed to set mode within 25ms!"};
+//	stream.update_motor_mode(orca_mode);
 	return { false, "" };
 }
 
@@ -429,20 +429,20 @@ OrcaError Actuator::trigger_kinematic_motion(int8_t ID) {
 	return write_register_blocking(KIN_SW_TRIGGER, ID);
 }
 
-OrcaError Actuator::begin_serial_logging(const std::string& log_name)
-{
-	std::shared_ptr<Log> app_log = std::make_shared<Log>();
-	app_log->set_verbose_mode(false);
-	return begin_serial_logging(log_name, app_log);
-}
-
-OrcaError Actuator::begin_serial_logging(const std::string& log_name, std::shared_ptr<LogInterface> log)
-{
-	OrcaError error = log->open(log_name);
-	if (error) return error;
-	modbus_client.begin_logging(log);
-	return OrcaError(false, "");
-}
+//OrcaError Actuator::begin_serial_logging(const std::string& log_name)
+//{
+//	std::shared_ptr<Log> app_log = std::make_shared<Log>();
+//	app_log->set_verbose_mode(false);
+//	return begin_serial_logging(log_name, app_log);
+//}
+//
+//OrcaError Actuator::begin_serial_logging(const std::string& log_name, std::shared_ptr<LogInterface> log)
+//{
+//	OrcaError error = log->open(log_name);
+//	if (error) return error;
+//	modbus_client.begin_logging(log);
+//	return OrcaError(false, "");
+//}
 
 void Actuator::set_stream_paused(bool paused)
 {
