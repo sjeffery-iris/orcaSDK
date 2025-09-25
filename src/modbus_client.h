@@ -34,7 +34,7 @@
 #include <sstream>
 #include "clock.h"
 #include <memory>
-
+#include "xil_printf.h"
 namespace orcaSDK
 {
 
@@ -190,12 +190,15 @@ public:
     {
         //while there are bytes left to send in the transaction, continue adding them to sendBuf
         Transaction* active_transaction = messages.get_active_transaction();
+//        xil_printf("Transaction ptr is %p\r\n", active_transaction);
+//        if(!active_transaction) xil_printf("Transaction ptr is NULL!\r\n");
 
         if (!active_transaction->is_queued()) return;
 
         while (active_transaction->bytes_left_to_send()) {
             //send the current data byte
             uint8_t data = active_transaction->pop_tx_buffer();
+//        	xil_printf("%c", data);
             serial_interface.send_byte(data);
             diagnostic_counters.increment_diagnostic_counter(bytes_out_count);
 
@@ -210,7 +213,6 @@ public:
             }
         }
         if (logging) log_transaction_transmission(active_transaction);
-
         messages.mark_active_message_sent();
         serial_interface.tx_enable(active_transaction->get_expected_length());		// enabling the transmitter interrupts results in the send() function being called until the active message is fully sent to hardware
         diagnostic_counters.increment_diagnostic_counter(message_sent_count);    //temp? - for frequency benchmarking
@@ -240,7 +242,7 @@ public:
      * @brief enqueue a Transaction
      * @param message should be a populated Transaction object which will be copied into a Transaction in the message queue
     */
-    void enqueue_transaction(Transaction message) {       
+    void enqueue_transaction(Transaction message) {
         messages.enqueue(message);
     }
 
@@ -361,15 +363,18 @@ private:
 	 * 		  Example: Call from UART byte received interrupt or when polling the hardware for data in the input fifo
 	 */
 	void receive() {
-        if (messages.size() == 0) return;
+//        if (messages.size() == 0) return;
         
         Transaction* active_transaction = messages.get_active_transaction();
 
-        if (!active_transaction->is_active()) return;
+        bool active = active_transaction->is_active();
+        if (!active) return;
 
+//        xil_printf("RX Bytes: ");
         while (serial_interface.ready_to_receive())
         {
             uint8_t byte = serial_interface.receive_byte();
+//            xil_printf("%c", byte);
             active_transaction->load_reception(byte); //read the next byte from the receiver buffer. This clears the byte received interrupt    ??TODO: should we be loading here? it seems that in the overrun case we've already walked off the end of the array??
             diagnostic_counters.increment_diagnostic_counter(bytes_in_count);
 
@@ -384,6 +389,7 @@ private:
                 enable_interchar_timeout();
             }
         }
+//        xil_printf("\r\n");
     }
 
 

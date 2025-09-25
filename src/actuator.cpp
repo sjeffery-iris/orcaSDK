@@ -94,9 +94,11 @@ OrcaResult<int32_t> Actuator::read_wide_register_blocking(uint16_t reg_address, 
 OrcaResult<uint16_t> Actuator::read_register_blocking(uint16_t reg_address, MessagePriority priority)
 {
 	modbus_client.enqueue_transaction(DefaultModbusFunctions::read_holding_registers_fn(modbus_server_address, reg_address, 1, priority));
-	flush();
-	if (message_error) return { 0, message_error };
-	return { message_data[0], message_error};
+//	flush();
+//	if (message_error) return { 0, message_error };
+//	return { message_data[0], message_error};
+	modbus_client.send_front_message();
+	return { 0, 0 };
 }
 
 OrcaResult<std::vector<uint16_t>> Actuator::read_multiple_registers_blocking(uint16_t reg_start_address, uint8_t num_registers, MessagePriority priority)
@@ -180,7 +182,7 @@ OrcaError Actuator::enable_haptic_effects(uint16_t effects) {
 void Actuator::run()
 {
 	run_in();
-	run_out();
+//	run_out();
 }
 
 void Actuator::flush()
@@ -209,11 +211,11 @@ void Actuator::run_out() {
 void Actuator::run_in() {
 	modbus_client.run_in();
 
-	if (modbus_client.is_response_ready()) {
-		Transaction response = modbus_client.dequeue_transaction();
-
-		handle_transaction_response(response);
-	}
+//	if (modbus_client.is_response_ready()) {
+//		Transaction response = modbus_client.dequeue_transaction();
+//
+//		handle_transaction_response(response);
+//	}
 }
 
 void Actuator::handle_transaction_response(Transaction response)

@@ -29,6 +29,7 @@
 #include "diagnostics_tracker.h"
 #include "transaction.h"
 #include <list>
+#include "xil_printf.h"
 
 namespace orcaSDK
 {
@@ -75,7 +76,8 @@ public:
     */
     void enqueue(Transaction message){
         message.mark_queued();
-        transaction_buffer.push_back(message);
+//        transaction_buffer.push_back(message);
+        my_transaction = message;
     }
 
     void insert_next(Transaction message)
@@ -95,7 +97,8 @@ public:
      * @brief used to check whether a message is ready to be dequeued
      */
     bool is_response_ready() {
-        return transaction_buffer.size() && transaction_buffer.front().is_ready_to_process();
+//        return transaction_buffer.size() && transaction_buffer.front().is_ready_to_process();
+    	my_transaction.is_ready_to_process();
     }
 
 
@@ -104,20 +107,23 @@ public:
      * 
     */
     Transaction dequeue(){
-        Transaction ret;
-    	if(size()) {
-            transaction_buffer.front().mark_dequeued();
-            ret = transaction_buffer.front();
-            transaction_buffer.pop_front();
-    	}
-        return ret;
+//        Transaction ret;
+//    	if(size()) {
+//            transaction_buffer.front().mark_dequeued();
+//            ret = transaction_buffer.front();
+//            transaction_buffer.pop_front();
+//    	}
+//        return ret;
+    	my_transaction.mark_dequeued();
+    	return my_transaction;
     }
 
     /**
      * @brief returns a pointer to the active transaction. No checking is done as to the state of the transaction
      */
     Transaction * get_active_transaction () {
-    	return &transaction_buffer.front();
+//    	return &transaction_buffer.front();
+    	return &my_transaction;
     }
 
     /**
@@ -130,12 +136,13 @@ public:
 
         if (size() == 0) return false;
 
-        return transaction_buffer.front().is_queued();
+        return my_transaction.is_queued();
     }
 
     void mark_active_message_sent()
     {
-        transaction_buffer.front().mark_sent();
+//        transaction_buffer.front().mark_sent();
+    	my_transaction.mark_sent();
     }
 
 	/**
@@ -148,7 +155,8 @@ public:
 
 private:
     DiagnosticsTracker& diagnostics_tracker;
-    std::list<Transaction> transaction_buffer;  
+    std::list<Transaction> transaction_buffer;
+    Transaction my_transaction;
 };
 
 }
