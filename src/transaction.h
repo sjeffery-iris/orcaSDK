@@ -417,7 +417,7 @@ private:
 #elif defined(ATTINY1617)
     uint8_t tx_buffer[64] = { 0 }; //The data to transmit
 #else
-    uint8_t tx_buffer[256] = { 0 }; //The data to transmit
+    uint8_t tx_buffer[64] = { 0 }; //The data to transmit
 #endif
 
     int rx_buffer_size = 0;               //The number of bytes stored in response
@@ -426,7 +426,7 @@ private:
 #elif defined(ATTINY1617)
     uint8_t rx_buffer[64] = { 0 }; //The data to transmit
 #else
-    uint8_t rx_buffer[256] = { 0 }; //The received response to the transmitted request
+    uint8_t rx_buffer[64] = { 0 }; //The received response to the transmitted request
 #endif 
 
     bool important = false;
@@ -439,7 +439,7 @@ private:
         ready_to_process,				// marked as done (either received or error encountered) as received or timed out
         dequeued,				// marked as having been removed from the queue (but not reset)
     };
-    TRANSMIT_STATE my_state = unused;
+    volatile TRANSMIT_STATE my_state = unused;
 
     uint8_t reception_validity = 0b00000000;  //each bit of reception_validity indicates a different error in the response, bit = 0 means no error, bit = 1 means error detected
     //bit 0 - noise error

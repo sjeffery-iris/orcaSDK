@@ -26,10 +26,10 @@
 #include <cstdint>
 #include "src/message_priority.h"
 #include "orca600_api/orca600_memory_map.h"
-#include <string>
-#include <vector>
+//#include <string>
+//#include <vector>
 
-#include <functional>
+//#include <functional>
 #include "src/serial_interface.h"
 #include "src/modbus_client.h"
 #include "src/orca_stream.h"
@@ -51,8 +51,8 @@ namespace orcaSDK
  */
 class Actuator {
 
-	std::shared_ptr<SerialInterface> serial_interface;
-	std::shared_ptr<Clock> clock;
+	SerialInterface* serial_interface;
+	Clock* clock;
 
 public:
 	ModbusClient modbus_client;
@@ -85,8 +85,8 @@ public:
 	 *	@overload Actuator::Actuator(std::shared_ptr<SerialInterface> serial_interface, std::shared_ptr<Clock> clock, const char* name, uint8_t modbus_server_address = 1)
 	 */
 	Actuator(
-		std::shared_ptr<SerialInterface> serial_interface,
-		std::shared_ptr<Clock> clock,
+		SerialInterface* serial_interface,
+		Clock* clock,
 		const char* name,
 		uint8_t modbus_server_address = 1
 	);
@@ -104,11 +104,11 @@ public:
 	 *								before initiating the next. Should match the interframe delay
 	 *								configured in the Orca's modbus settings.
 	 */
-	OrcaError open_serial_port(
-		std::string port_path,
-		int baud_rate = Constants::kDefaultBaudRate,
-		int interframe_delay = Constants::kDefaultInterframeDelay_uS
-	);
+//	OrcaError open_serial_port(
+//		std::string port_path,
+//		int baud_rate = Constants::kDefaultBaudRate,
+//		int interframe_delay = Constants::kDefaultInterframeDelay_uS
+//	);
 
 	/**
 	 *	Attempts to open a desired serial port, creating the expected file path
@@ -118,7 +118,7 @@ public:
 	 * @overload	Actuator::open_serial_port(int port_number, int baud_rate, int interframe_delay)
 	 */
 	OrcaError open_serial_port(
-		int port_number, 
+		int port_number,
 		int baud_rate = Constants::kDefaultBaudRate,
 		int interframe_delay = Constants::kDefaultInterframeDelay_uS
 	);
@@ -195,7 +195,7 @@ public:
 	 * @param reg_start_address The starting register address
 	 * @param num_registers How many registers to read
 	 */
-	OrcaResult<std::vector<uint16_t>> read_multiple_registers_blocking(uint16_t reg_start_address, uint8_t num_registers, MessagePriority priority = MessagePriority::important);
+//	OrcaResult<std::vector<uint16_t>> read_multiple_registers_blocking(uint16_t reg_start_address, uint8_t num_registers, MessagePriority priority = MessagePriority::important);
 
 	/**
 	 * @brief Writes a register from the motor.
@@ -231,11 +231,11 @@ public:
 	 * @param write_num_registers The amount of registers to write
 	 * @param write_data An array containing the values to be written
 	 */
-	OrcaResult<std::vector<uint16_t>> read_write_multiple_registers_blocking(
-		uint16_t read_starting_address, uint8_t read_num_registers,
-		uint16_t write_starting_address, uint8_t write_num_registers,
-		uint16_t* write_data,
-		MessagePriority priority = MessagePriority::important);
+//	OrcaResult<std::vector<uint16_t>> read_write_multiple_registers_blocking(
+//		uint16_t read_starting_address, uint8_t read_num_registers,
+//		uint16_t write_starting_address, uint8_t write_num_registers,
+//		uint16_t* write_data,
+//		MessagePriority priority = MessagePriority::important);
 
 	/**
 	 *	Begins logging all serial communication between this application/object
@@ -244,7 +244,7 @@ public:
 							to the location of the built executable file.
 	 *  @overload	Actuator::begin_serial_logging(const std::string& log_name)
 	 */
-	OrcaError begin_serial_logging(const std::string& log_name);
+//	OrcaError begin_serial_logging(const std::string& log_name);
 	/** 
 	 *	Begins logging using a custom log implementation.
 	 *	@param	log_name	The name of the file to be written to. Assumes relative path
@@ -253,7 +253,7 @@ public:
 	 *				behaviour is desired.
 	 *  @overload	Actuator::begin_serial_logging(const std::string& log_name, std::shared_ptr<LogInterface> log)
 	 */
-	OrcaError begin_serial_logging(const std::string& log_name, std::shared_ptr<LogInterface> log);
+//	OrcaError begin_serial_logging(const std::string& log_name, std::shared_ptr<LogInterface> log);
 
 #pragma endregion
 
@@ -592,9 +592,11 @@ public:
 
 #pragma endregion
 
+	size_t response_count = 0;
+//	std::vector<uint16_t> message_data{};
+	std::array<uint16_t, 32> message_data{};
 private:
 	OrcaError message_error{false};
-	std::vector<uint16_t> message_data{};
 	
 	OrcaStream stream;
 

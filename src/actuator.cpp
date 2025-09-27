@@ -31,8 +31,8 @@ int32_t combine_into_wide_register(uint16_t low_reg_value, uint16_t high_reg_val
 //{}
 
 Actuator::Actuator(
-	std::shared_ptr<SerialInterface> serial_interface,
-	std::shared_ptr<Clock> clock,
+	SerialInterface* serial_interface,
+	Clock* clock,
 	const char* name,
 	uint8_t modbus_server_address
 ) :
@@ -46,18 +46,18 @@ Actuator::Actuator(
 {}
 
 OrcaError Actuator::open_serial_port(int port_number, int baud_rate, int interframe_delay) {
-	OrcaError serial_error = serial_interface->open_serial_port(port_number, baud_rate);
-	if (serial_error) return serial_error;
-	modbus_client.init(interframe_delay);
+//	OrcaError serial_error = serial_interface->open_serial_port(port_number, baud_rate);
+//	if (serial_error) return serial_error;
+//	modbus_client.init(interframe_delay);
 	return { 0 };
 }
 
-OrcaError Actuator::open_serial_port(std::string port_path, int baud_rate, int interframe_delay) {
-	OrcaError serial_error = serial_interface->open_serial_port(port_path, baud_rate);
-	if (serial_error) return serial_error;
-	modbus_client.init(interframe_delay);
-	return { 0 };
-}
+//OrcaError Actuator::open_serial_port(std::string port_path, int baud_rate, int interframe_delay) {
+//	OrcaError serial_error = serial_interface->open_serial_port(port_path, baud_rate);
+//	if (serial_error) return serial_error;
+//	modbus_client.init(interframe_delay);
+//	return { 0 };
+//}
 
 void Actuator::close_serial_port() {
 	serial_interface->close_serial_port();
@@ -101,15 +101,15 @@ OrcaResult<uint16_t> Actuator::read_register_blocking(uint16_t reg_address, Mess
 	return { 0, 0 };
 }
 
-OrcaResult<std::vector<uint16_t>> Actuator::read_multiple_registers_blocking(uint16_t reg_start_address, uint8_t num_registers, MessagePriority priority)
-{
-	if (num_registers == 0) return { {}, OrcaError{0} };
-
-	modbus_client.enqueue_transaction(DefaultModbusFunctions::read_holding_registers_fn(modbus_server_address, reg_start_address, num_registers, priority));
-	flush();
-
-	return { message_data, message_error };
-}
+//OrcaResult<std::vector<uint16_t>> Actuator::read_multiple_registers_blocking(uint16_t reg_start_address, uint8_t num_registers, MessagePriority priority)
+//{
+//	if (num_registers == 0) return { {}, OrcaError{0} };
+//
+//	modbus_client.enqueue_transaction(DefaultModbusFunctions::read_holding_registers_fn(modbus_server_address, reg_start_address, num_registers, priority));
+//	flush();
+//
+//	return { message_data, message_error };
+//}
 
 OrcaError Actuator::write_register_blocking(uint16_t reg_address, uint16_t write_data, MessagePriority priority)
 {
@@ -141,27 +141,27 @@ OrcaError Actuator::write_multiple_registers_blocking(uint16_t reg_start_address
 	return message_error;
 }
 
-OrcaResult<std::vector<uint16_t>> Actuator::read_write_multiple_registers_blocking(
-	uint16_t read_starting_address, uint8_t read_num_registers,
-	uint16_t write_starting_address, uint8_t write_num_registers,
-	uint16_t* write_data,
-	MessagePriority priority)
-{
-	uint8_t data[128];
-	for (int i = 0; i < write_num_registers; i++) {
-		data[i * 2] = uint8_t(write_data[i] >> 8);
-		data[i * 2 + 1] = uint8_t(write_data[i]);
-	}
-
-	modbus_client.enqueue_transaction(DefaultModbusFunctions::read_write_multiple_registers_fn(
-		modbus_server_address,
-		read_starting_address, read_num_registers,
-		write_starting_address, write_num_registers,
-		data, priority));
-	flush();
-
-	return { message_data, message_error };
-}
+//OrcaResult<std::vector<uint16_t>> Actuator::read_write_multiple_registers_blocking(
+//	uint16_t read_starting_address, uint8_t read_num_registers,
+//	uint16_t write_starting_address, uint8_t write_num_registers,
+//	uint16_t* write_data,
+//	MessagePriority priority)
+//{
+//	uint8_t data[128];
+//	for (int i = 0; i < write_num_registers; i++) {
+//		data[i * 2] = uint8_t(write_data[i] >> 8);
+//		data[i * 2 + 1] = uint8_t(write_data[i]);
+//	}
+//
+//	modbus_client.enqueue_transaction(DefaultModbusFunctions::read_write_multiple_registers_fn(
+//		modbus_server_address,
+//		read_starting_address, read_num_registers,
+//		write_starting_address, write_num_registers,
+//		data, priority));
+//	flush();
+//
+//	return { message_data, message_error };
+//}
 
 OrcaResult<int32_t> Actuator::get_force_mN() {
 	return read_wide_register_blocking(FORCE);
@@ -211,26 +211,27 @@ void Actuator::run_out() {
 void Actuator::run_in() {
 	modbus_client.run_in();
 
-//	if (modbus_client.is_response_ready()) {
-//		Transaction response = modbus_client.dequeue_transaction();
-//
-//		handle_transaction_response(response);
-//	}
+	if (modbus_client.is_response_ready()) {
+		Transaction response = modbus_client.dequeue_transaction();
+
+		handle_transaction_response(response);
+		response_count++;
+	}
 }
 
 void Actuator::handle_transaction_response(Transaction response)
 {
-	message_data.clear();
+//	message_data.clear();
 
 	int ec = response.get_failure_codes();
 
-	std::stringstream error_message;
-	if (ec & (1 << Transaction::RESPONSE_TIMEOUT_ERROR)) error_message << "Response timed out, the motor took too long to respond. ";
-	if (ec & (1 << Transaction::INTERCHAR_TIMEOUT_ERROR)) error_message << "Unexpected interchar delay timeout. ";
-	if (ec & (1 << Transaction::UNEXPECTED_RESPONDER)) error_message << "Wrong modbus response address. ";
-	if (ec & (1 << Transaction::CRC_ERROR)) error_message << "Wrong CRC. ";
-
-	message_error = OrcaError{response.get_failure_codes(), error_message.str()};
+//	std::stringstream error_message;
+//	if (ec & (1 << Transaction::RESPONSE_TIMEOUT_ERROR)) error_message << "Response timed out, the motor took too long to respond. ";
+//	if (ec & (1 << Transaction::INTERCHAR_TIMEOUT_ERROR)) error_message << "Unexpected interchar delay timeout. ";
+//	if (ec & (1 << Transaction::UNEXPECTED_RESPONDER)) error_message << "Wrong modbus response address. ";
+//	if (ec & (1 << Transaction::CRC_ERROR)) error_message << "Wrong CRC. ";
+//
+//	message_error = OrcaError{response.get_failure_codes(), error_message.str()};
 
 	if (!ec)
 	{
@@ -246,7 +247,8 @@ void Actuator::handle_transaction_response(Transaction response)
 		uint16_t num_registers = (response.get_tx_data()[2] << 8) + response.get_tx_data()[3];
 		for (int i = 0; i < num_registers; i++) {
 			uint16_t register_data = (response.get_rx_data()[1 + i * 2] << 8) + response.get_rx_data()[2 + i * 2];
-			message_data.push_back(register_data);
+//			message_data.push_back(register_data);
+			message_data[i] = register_data;
 		}
 		break;
 	}

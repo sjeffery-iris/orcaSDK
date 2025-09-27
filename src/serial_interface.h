@@ -1,8 +1,9 @@
 #pragma once
 
 #include <cstdint>
-#include <vector>
+//#include <vector>
 #include "error_types.h"
+#include "stddef.h"
 
 namespace orcaSDK
 {
@@ -20,13 +21,13 @@ public:
 	 *	@brief	Obtains the serial port with the given serial port number. Setting baud rate
 	 *			based on the passed parameter.
 	 */
-	virtual OrcaError open_serial_port(int serial_port_number, unsigned int baud) = 0;
+//	virtual OrcaError open_serial_port(int serial_port_number, unsigned int baud) = 0;
 
 	/**
 	 *	@brief	Obtains the serial port with the given serial port number. Setting baud rate
 	 *			based on the passed parameter.
 	 */
-	virtual OrcaError open_serial_port(std::string serial_port_path, unsigned int baud) = 0;
+//	virtual OrcaError open_serial_port(std::string serial_port_path, unsigned int baud) = 0;
 
 
 	/**
@@ -66,7 +67,7 @@ public:
 	 */
 	virtual uint8_t receive_byte() = 0;
 
-	virtual std::vector<uint8_t> receive_bytes_blocking() = 0;
+//	virtual std::vector<uint8_t> receive_bytes_blocking() = 0;
 };
 
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+//#include <string>
 
 namespace orcaSDK
 {
@@ -22,10 +22,10 @@ class OrcaError
 public:
 	OrcaError(
 		const int failure_type,
-		std::string error_message = ""
+		char* error_message = nullptr
 	) :
-		failure(failure_type),
-		error_message(error_message)
+		failure(failure_type)
+//		error_message(error_message)
 	{}
 
 	/**
@@ -49,15 +49,16 @@ public:
 	 *		function will return an empty string.
 	 *	@return	std::string	An error message containing a description of what error occurred
 	 */
-	std::string what() const
-	{
-		return error_message;
-	}
+//	std::string what() const
+//	{
+//		return error_message;
+//	}
 
 private:
 
 	bool failure;
-	std::string error_message;
+//	std::string error_message;
+	char* error_message = "";
 };
 
 /**

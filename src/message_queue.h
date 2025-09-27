@@ -28,8 +28,8 @@
 
 #include "diagnostics_tracker.h"
 #include "transaction.h"
-#include <list>
-#include "xil_printf.h"
+//#include <list>
+//#include "xil_printf.h"
 
 namespace orcaSDK
 {
@@ -59,16 +59,16 @@ public:
 		PRINTDL("back: ", back_index);
 		PRINTDL("active: ", active_index);
 #endif 
-    	for (Transaction& t : transaction_buffer) {
-    		t.printme();
-    	}
+//    	for (Transaction& t : transaction_buffer) {
+//    		t.printme();
+//    	}
     }
 
     /**
      * @brief reset all messages in the queue to be empty
      */
     void reset () {
-        transaction_buffer.clear();
+//        transaction_buffer.clear();
     }
 
     /**
@@ -83,14 +83,15 @@ public:
     void insert_next(Transaction message)
     {
         message.mark_queued();
-        if (transaction_buffer.size() > 0)
-        {
-            transaction_buffer.insert(++transaction_buffer.begin(), message);
-        }
-        else
-        {
-            transaction_buffer.push_front(message);
-        }
+//        if (transaction_buffer.size() > 0)
+//        {
+//            transaction_buffer.insert(++transaction_buffer.begin(), message);
+//        }
+//        else
+//        {
+//            transaction_buffer.push_front(message);
+//        }
+        my_transaction = message;
     }
 
     /**
@@ -98,7 +99,7 @@ public:
      */
     bool is_response_ready() {
 //        return transaction_buffer.size() && transaction_buffer.front().is_ready_to_process();
-    	my_transaction.is_ready_to_process();
+    	return my_transaction.is_ready_to_process();
     }
 
 
@@ -150,12 +151,13 @@ public:
 	 * @return The number of messages in the queue
 	*/
    size_t size(){
-	   return transaction_buffer.size();
+//	   return transaction_buffer.size();
+	   return 0;
    }
 
 private:
     DiagnosticsTracker& diagnostics_tracker;
-    std::list<Transaction> transaction_buffer;
+//    std::list<Transaction> transaction_buffer;
     Transaction my_transaction;
 };
 

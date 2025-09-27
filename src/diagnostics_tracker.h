@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <array>
-#include <iostream>
+//#include <iostream>
 
 namespace orcaSDK
 {
@@ -35,25 +35,25 @@ class DiagnosticsTracker
 public:
     DiagnosticsTracker()
     {
-        diagnostic_counters.fill(0);
+//        diagnostic_counters.fill(0);
     };
 
     void increment_diagnostic_counter(diagnostic_counter_t diagnostic_number)
     {
-        if (outOfDiagnosticsRange(diagnostic_number))
-        {
-            throw std::out_of_range("Index out of bounds. Tried to update diagnostic value out of range");
-        }
+//        if (outOfDiagnosticsRange(diagnostic_number))
+//        {
+//            throw std::out_of_range("Index out of bounds. Tried to update diagnostic value out of range");
+//        }
 
         diagnostic_counters[diagnostic_number]++;
     }
 
     uint16_t Get(diagnostic_counter_t diagnostic_number)
     {
-        if (outOfDiagnosticsRange(diagnostic_number))
-        {
-            throw std::out_of_range("Index out of bounds. Tried to read diagnostic value out of range");
-        }
+//        if (outOfDiagnosticsRange(diagnostic_number))
+//        {
+//            throw std::out_of_range("Index out of bounds. Tried to read diagnostic value out of range");
+//        }
 
         return diagnostic_counters[diagnostic_number];
     }

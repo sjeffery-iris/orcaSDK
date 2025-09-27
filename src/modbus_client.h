@@ -29,11 +29,7 @@
 #include "diagnostics_tracker.h"
 #include "message_queue.h"
 #include "../tools/log_interface.h"
-#include <iostream>
-#include <iomanip>
-#include <sstream>
 #include "clock.h"
-#include <memory>
 #include "xil_printf.h"
 namespace orcaSDK
 {
@@ -190,15 +186,12 @@ public:
     {
         //while there are bytes left to send in the transaction, continue adding them to sendBuf
         Transaction* active_transaction = messages.get_active_transaction();
-//        xil_printf("Transaction ptr is %p\r\n", active_transaction);
-//        if(!active_transaction) xil_printf("Transaction ptr is NULL!\r\n");
 
         if (!active_transaction->is_queued()) return;
 
         while (active_transaction->bytes_left_to_send()) {
             //send the current data byte
             uint8_t data = active_transaction->pop_tx_buffer();
-//        	xil_printf("%c", data);
             serial_interface.send_byte(data);
             diagnostic_counters.increment_diagnostic_counter(bytes_out_count);
 
@@ -220,18 +213,18 @@ public:
     }
 
     void receive_blocking() {
-        Transaction* active_transaction = messages.get_active_transaction();
-
-        std::vector<uint8_t> response = serial_interface.receive_bytes_blocking();
-
-        for (int i = 0; i < response.size(); i++)
-        {
-            active_transaction->load_reception(response[i]); //read the next byte from the receiver buffer. This clears the byte received interrupt    ??TODO: should we be loading here? it seems that in the overrun case we've already walked off the end of the array??
-            diagnostic_counters.increment_diagnostic_counter(bytes_in_count);
-        }
-
-        active_transaction->validate_response(diagnostic_counters);// might transition to resting from connected
-        conclude_transaction(active_transaction);
+//        Transaction* active_transaction = messages.get_active_transaction();
+//
+//        std::vector<uint8_t> response = serial_interface.receive_bytes_blocking();
+//
+//        for (int i = 0; i < response.size(); i++)
+//        {
+//            active_transaction->load_reception(response[i]); //read the next byte from the receiver buffer. This clears the byte received interrupt    ??TODO: should we be loading here? it seems that in the overrun case we've already walked off the end of the array??
+//            diagnostic_counters.increment_diagnostic_counter(bytes_in_count);
+//        }
+//
+//        active_transaction->validate_response(diagnostic_counters);// might transition to resting from connected
+//        conclude_transaction(active_transaction);
     }
 
 ////////////////////////////////////////////////////////////
@@ -307,11 +300,11 @@ public:
         return clock.get_time_microseconds();
     }
 
-    void begin_logging(std::shared_ptr<LogInterface> _log)
-    {
-        log = _log;
-        logging = true;
-    }
+//    void begin_logging(std::shared_ptr<LogInterface> _log)
+//    {
+//        log = _log;
+//        logging = true;
+//    }
 
     DiagnosticsTracker diagnostic_counters;
 
@@ -319,7 +312,7 @@ private:
     SerialInterface& serial_interface;
     Clock& clock;
 
-    std::shared_ptr<LogInterface> log;
+//    std::shared_ptr<LogInterface> log;
 
     MessageQueue messages{ diagnostic_counters };            //!<a buffer for outgoing messages to facilitate timing and order of transmissions and responses
 
@@ -474,34 +467,34 @@ private:
 
     void log_transaction_transmission(Transaction* transaction)
     {
-        std::stringstream message;
-        message << clock.get_time_microseconds() << "\ttx";
-        uint8_t* tx_data = transaction->get_raw_tx_data();
-        for (int i = 0; i < transaction->get_tx_buffer_size(); i++)
-        {
-            message << "\t" << std::setfill('0') << std::setw(2) << std::noshowbase << std::hex << (int)tx_data[i];
-        }
-        log->write(message.str());
+//        std::stringstream message;
+//        message << clock.get_time_microseconds() << "\ttx";
+//        uint8_t* tx_data = transaction->get_raw_tx_data();
+//        for (int i = 0; i < transaction->get_tx_buffer_size(); i++)
+//        {
+//            message << "\t" << std::setfill('0') << std::setw(2) << std::noshowbase << std::hex << (int)tx_data[i];
+//        }
+//        log->write(message.str());
     }
 
     void log_transaction_response(Transaction* transaction)
     {
-        std::stringstream message;
-        message << clock.get_time_microseconds() << "\trx";
-        uint8_t* rx_data = transaction->get_raw_rx_data();
-        for (int i = 0; i < transaction->get_rx_buffer_size(); i++)
-        {
-            message << "\t" << std::setfill('0') << std::setw(2) << std::noshowbase << std::hex << (int)rx_data[i];
-        }
-
-        uint8_t failure_codes = transaction->get_failure_codes();
-        if (failure_codes) message << "\t";
-        if (failure_codes & (1 << Transaction::RESPONSE_TIMEOUT_ERROR)) message << "Timed out. ";
-        if (failure_codes & (1 << Transaction::INTERCHAR_TIMEOUT_ERROR)) message << "Unexpected interchar. ";
-        if (failure_codes & (1 << Transaction::UNEXPECTED_RESPONDER)) message << "Wrong address. ";
-        if (failure_codes & (1 << Transaction::CRC_ERROR)) message << "Wrong CRC. ";
-
-        log->write(message.str());
+//        std::stringstream message;
+//        message << clock.get_time_microseconds() << "\trx";
+//        uint8_t* rx_data = transaction->get_raw_rx_data();
+//        for (int i = 0; i < transaction->get_rx_buffer_size(); i++)
+//        {
+//            message << "\t" << std::setfill('0') << std::setw(2) << std::noshowbase << std::hex << (int)rx_data[i];
+//        }
+//
+//        uint8_t failure_codes = transaction->get_failure_codes();
+//        if (failure_codes) message << "\t";
+//        if (failure_codes & (1 << Transaction::RESPONSE_TIMEOUT_ERROR)) message << "Timed out. ";
+//        if (failure_codes & (1 << Transaction::INTERCHAR_TIMEOUT_ERROR)) message << "Unexpected interchar. ";
+//        if (failure_codes & (1 << Transaction::UNEXPECTED_RESPONDER)) message << "Wrong address. ";
+//        if (failure_codes & (1 << Transaction::CRC_ERROR)) message << "Wrong CRC. ";
+//
+//        log->write(message.str());
     }
 
     void conclude_transaction(Transaction* transaction)
