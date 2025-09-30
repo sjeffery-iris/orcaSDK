@@ -363,11 +363,9 @@ private:
         bool active = active_transaction->is_active();
         if (!active) return;
 
-//        xil_printf("RX Bytes: ");
         while (serial_interface.ready_to_receive())
         {
             uint8_t byte = serial_interface.receive_byte();
-//            xil_printf("%c", byte);
             active_transaction->load_reception(byte); //read the next byte from the receiver buffer. This clears the byte received interrupt    ??TODO: should we be loading here? it seems that in the overrun case we've already walked off the end of the array??
             diagnostic_counters.increment_diagnostic_counter(bytes_in_count);
 
@@ -382,7 +380,6 @@ private:
                 enable_interchar_timeout();
             }
         }
-//        xil_printf("\r\n");
     }
 
 

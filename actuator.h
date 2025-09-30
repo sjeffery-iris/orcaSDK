@@ -34,7 +34,7 @@
 #include "src/modbus_client.h"
 #include "src/orca_stream.h"
 #include "src/orca_modes.h"
-
+#include "src/orca_function_codes.h"
 #include "src/error_types.h"
 #include "src/command_stream_structs.h"
 #include "src/constants.h"
@@ -255,6 +255,8 @@ public:
 	 */
 //	OrcaError begin_serial_logging(const std::string& log_name, std::shared_ptr<LogInterface> log);
 
+	void async_ext_motor_frame(uint8_t mode, uint32_t command, uint16_t read_reg_address, MessagePriority priority = MessagePriority::important);
+
 #pragma endregion
 
 #pragma region STREAMING
@@ -263,6 +265,23 @@ public:
 	 *	@brief	The member variable in which responses to command stream messages are stored.
 	 */
 	StreamData stream_cache;
+
+	struct ExtMotorStreamData {
+		int32_t force{ 0 }; //! The sensed force of the motor.
+		int32_t position{ 0 }; //! The position in micrometers from the zero position of the motor.
+		int32_t speed{ 0 };
+		int32_t accel{ 0 };
+		int16_t board_temp{ 0 };
+		int16_t coil_temp{ 0 };
+		uint16_t vdd{ 0 };
+		uint16_t power{ 0 };
+		uint16_t mode{ 0 };
+		uint16_t kin_status{ 0 };
+		uint16_t errors{ 0 };
+		uint16_t read_reg_data[OrcaModbusFunctions::kExtMotorCmdNumRegRead]{ 0 };
+	};
+
+	ExtMotorStreamData ext_motor_stream_cache;
 
 	/**
 	 *	@brief	The normal run loop for motor communication. Checks for incoming serial data and
@@ -592,7 +611,7 @@ public:
 
 #pragma endregion
 
-	size_t response_count = 0;
+	size_t ext_motor_frame_response_count = 0;
 //	std::vector<uint16_t> message_data{};
 	std::array<uint16_t, 32> message_data{};
 private:

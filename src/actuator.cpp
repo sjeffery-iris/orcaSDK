@@ -6,6 +6,7 @@
 #include "../actuator.h"
 //#include "chrono_clock.h"
 #include "standard_modbus_functions.h"
+#include "orca_function_codes.h"
 //#include "tools/log.h"
 //#include "command_and_confirm.h"
 #include <limits>
@@ -163,6 +164,17 @@ OrcaError Actuator::write_multiple_registers_blocking(uint16_t reg_start_address
 //	return { message_data, message_error };
 //}
 
+void Actuator::async_ext_motor_frame(uint8_t mode, uint32_t command, uint16_t read_reg_address, MessagePriority priority)
+{
+	modbus_client.enqueue_transaction(OrcaModbusFunctions::ext_motor_command_fn(
+		modbus_server_address,
+		mode,
+		command,
+		read_reg_address,
+		priority));
+	modbus_client.send_front_message();
+}
+
 OrcaResult<int32_t> Actuator::get_force_mN() {
 	return read_wide_register_blocking(FORCE);
 }
@@ -215,7 +227,6 @@ void Actuator::run_in() {
 		Transaction response = modbus_client.dequeue_transaction();
 
 		handle_transaction_response(response);
-		response_count++;
 	}
 }
 
@@ -265,6 +276,35 @@ void Actuator::handle_transaction_response(Transaction response)
 		stream_cache.errors = (response.get_rx_data()[13] << 8) | response.get_rx_data()[14];
 		break;
 	}
+	case OrcaFunctionCodes::ext_motor_command: {
+		int idx = 0;
+		uint8_t* d = response.get_rx_data();
+		int32_t force, position, speed, accel;
+		int16_t board_temp, coil_temp;
+		uint16_t vdd, power, mode, kin_status, errors;
+		uint16_t read_reg[OrcaModbusFunctions::kExtMotorCmdNumRegRead];
+		using namespace ModbusHelpers;
+		idx = parseuint32(d, idx, (uint32_t*)&force);
+		idx = parseuint32(d, idx, (uint32_t*)&position);
+		idx = parseuint32(d, idx, (uint32_t*)&speed);
+		idx = parseuint32(d, idx, (uint32_t*)&accel);
+		idx = parseuint16(d, idx, (uint16_t*)&board_temp);
+		idx = parseuint16(d, idx, (uint16_t*)&coil_temp);
+		idx = parseuint16(d, idx, &vdd);
+		idx = parseuint16(d, idx, &power);
+		idx = parseuint16(d, idx, &mode);
+		idx = parseuint16(d, idx, &kin_status);
+		idx = parseuint16(d, idx, &errors);
+		for(int i = 0; i < OrcaModbusFunctions::kExtMotorCmdNumRegRead; ++i) {
+			idx = parseuint16(d, idx, &read_reg[i]);
+		}
+		ext_motor_stream_cache = {force, position, speed, accel, board_temp,
+									coil_temp, vdd, power, mode, kin_status, errors,
+									read_reg[0], read_reg[1], read_reg[2], read_reg[3]};
+		ext_motor_frame_response_count++;
+		break;
+	}
+
 	case ModbusFunctionCodes::read_coils:
 	case ModbusFunctionCodes::read_discrete_inputs:
 	case ModbusFunctionCodes::read_input_registers:

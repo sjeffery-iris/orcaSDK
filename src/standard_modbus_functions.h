@@ -145,6 +145,24 @@ namespace DefaultModbusFunctions {
 		uint8_t* data, MessagePriority priority);
 }
 
+namespace ModbusHelpers {
+	inline int parseuint32(uint8_t* data, int start_index, uint32_t* value)
+	{
+		*value = (data[start_index]     << 24)
+			  | (data[start_index + 1] << 16)
+			  | (data[start_index + 2] << 8)
+			  |  data[start_index + 3];
+		return start_index + 4;
+	}
+
+	inline int parseuint16(uint8_t* data, int start_index, uint16_t* value)
+	{
+		*value = (data[start_index]     << 8)
+			   | data[start_index + 1];
+		return start_index + 2;
+	}
+}
+
 }
 
 #endif /* MODBUS_APPLICATION_H_ */
