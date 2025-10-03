@@ -277,7 +277,9 @@ public:
 		uint16_t power{ 0 };
 		uint16_t mode{ 0 };
 		uint16_t kin_status{ 0 };
+		uint16_t kin_complete_count{ 0 };
 		uint16_t errors{ 0 };
+		uint16_t placeholder{ 0 };
 		uint16_t read_reg_data[OrcaModbusFunctions::kExtMotorCmdNumRegRead]{ 0 };
 	};
 

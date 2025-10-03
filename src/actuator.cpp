@@ -281,7 +281,7 @@ void Actuator::handle_transaction_response(Transaction response)
 		uint8_t* d = response.get_rx_data();
 		int32_t force, position, speed, accel;
 		int16_t board_temp, coil_temp;
-		uint16_t vdd, power, mode, kin_status, errors;
+		uint16_t vdd, power, mode, kin_status, kin_complete_count, errors, placeholder;
 		uint16_t read_reg[OrcaModbusFunctions::kExtMotorCmdNumRegRead];
 		using namespace ModbusHelpers;
 		idx = parseuint32(d, idx, (uint32_t*)&force);
@@ -294,13 +294,15 @@ void Actuator::handle_transaction_response(Transaction response)
 		idx = parseuint16(d, idx, &power);
 		idx = parseuint16(d, idx, &mode);
 		idx = parseuint16(d, idx, &kin_status);
+		idx = parseuint16(d, idx, &kin_complete_count);
 		idx = parseuint16(d, idx, &errors);
+		idx = parseuint16(d, idx, &placeholder); // To be replaced with TBD value. Currently used for alignment
 		for(int i = 0; i < OrcaModbusFunctions::kExtMotorCmdNumRegRead; ++i) {
 			idx = parseuint16(d, idx, &read_reg[i]);
 		}
 		ext_motor_stream_cache = {force, position, speed, accel, board_temp,
-									coil_temp, vdd, power, mode, kin_status, errors,
-									read_reg[0], read_reg[1], read_reg[2], read_reg[3]};
+									coil_temp, vdd, power, mode, kin_status, kin_complete_count,
+									errors, read_reg[0], read_reg[1]};
 		ext_motor_frame_response_count++;
 		break;
 	}

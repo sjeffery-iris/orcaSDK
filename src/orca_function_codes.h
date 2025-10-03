@@ -28,7 +28,16 @@ namespace OrcaModbusFunctions {
 	 * @return 					An integer - 1 if the transaction is formatted and added to the buffer queue successfully, 0 if an exception occurs
 	 */
 	Transaction ext_motor_command_fn(uint8_t device_address, uint8_t mode, uint32_t command, uint16_t read_reg, MessagePriority priority);
-	static constexpr int kExtMotorCmdNumRegRead = 4; // How many registers are read per request of this type
+	static constexpr int kExtMotorCmdNumRegRead = 2; // How many registers are read per request of this type. This should be even.
+	static_assert(kExtMotorCmdNumRegRead % 2 == 0, "Must read even number of registers in ext_motor_command.");
+
+	// Enum for the mode argument of the ext_motor_command_fn
+	enum ExtMotorCommandMode {
+		SleepMode 	= 0,
+		PosMode 	= 1,
+		ForceMode 	= 2,
+		KinMode 	= 3
+	};
 }}
 
 #endif /* ORCA_FUNCTION_CODES_H_ */
