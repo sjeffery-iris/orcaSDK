@@ -33,10 +33,10 @@ namespace OrcaModbusFunctions {
 
 	// Enum for the mode argument of the ext_motor_command_fn
 	enum ExtMotorCommandMode {
-		SleepMode 	= 0,
-		PosMode 	= 1,
+		SleepMode 	= 1,
 		ForceMode 	= 2,
-		KinMode 	= 3
+		PosMode 	= 3,
+		KinMode 	= 5
 	};
 }}
 
