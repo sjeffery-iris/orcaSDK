@@ -302,7 +302,7 @@ void Actuator::handle_transaction_response(Transaction response)
 		}
 		ext_motor_stream_cache = {force, position, speed, accel, board_temp,
 									coil_temp, vdd, power, mode, kin_status, kin_complete_count,
-									errors, read_reg[0], read_reg[1]};
+									errors, placeholder, read_reg[0], read_reg[1]};
 		ext_motor_frame_response_count++;
 		break;
 	}
