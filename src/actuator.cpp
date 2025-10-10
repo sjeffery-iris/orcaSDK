@@ -175,6 +175,23 @@ void Actuator::async_ext_motor_frame(uint8_t mode, uint32_t command, uint16_t re
 	modbus_client.send_front_message();
 }
 
+void Actuator::async_write_multiple_registers(uint16_t reg_start_address, uint8_t num_registers, uint8_t* write_data, MessagePriority priority)
+{
+	modbus_client.enqueue_transaction(DefaultModbusFunctions::write_multiple_registers_fn(
+			modbus_server_address,
+			reg_start_address,
+			num_registers,
+			write_data,
+			priority));
+	modbus_client.send_front_message();
+}
+
+void Actuator::async_write_ping()
+{
+	modbus_client.enqueue_transaction(DefaultModbusFunctions::return_query_data_fn(modbus_server_address));
+	modbus_client.send_front_message();
+}
+
 OrcaResult<int32_t> Actuator::get_force_mN() {
 	return read_wide_register_blocking(FORCE);
 }
@@ -225,7 +242,6 @@ void Actuator::run_in() {
 
 	if (modbus_client.is_response_ready()) {
 		Transaction response = modbus_client.dequeue_transaction();
-
 		handle_transaction_response(response);
 	}
 }
@@ -303,7 +319,6 @@ void Actuator::handle_transaction_response(Transaction response)
 		ext_motor_stream_cache = {force, position, speed, accel, board_temp,
 									coil_temp, vdd, power, mode, kin_status, kin_complete_count,
 									errors, placeholder, read_reg[0], read_reg[1]};
-		ext_motor_frame_response_count++;
 		break;
 	}
 

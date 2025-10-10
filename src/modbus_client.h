@@ -248,6 +248,14 @@ public:
     }
 
     /**
+     * @brief Determine if the message last message was succesfully handled
+     * @return true if the message is successful and complete.
+    */
+    bool is_response_handled() {
+    	return messages.is_response_handled();
+    }
+
+    /**
      * @brief dequeue a transaction from the message queue
      * @return 0 when dequeue fails, or the address of the dequeued message otherwise
     */
@@ -362,7 +370,6 @@ private:
 
         bool active = active_transaction->is_active();
         if (!active) return;
-
         while (serial_interface.ready_to_receive())
         {
             uint8_t byte = serial_interface.receive_byte();
@@ -374,6 +381,10 @@ private:
             {
                 active_transaction->validate_response(diagnostic_counters);// might transition to resting from connected
                 conclude_transaction(active_transaction);
+				/* Should be no more valid bytes, flush em */
+				while (serial_interface.ready_to_receive()) {
+					serial_interface.receive_byte();
+				}
                 break;
             }
             else {

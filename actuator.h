@@ -257,6 +257,10 @@ public:
 
 	void async_ext_motor_frame(uint8_t mode, uint32_t command, uint16_t read_reg_address, MessagePriority priority = MessagePriority::important);
 
+	void async_write_multiple_registers(uint16_t reg_start_address, uint8_t num_registers, uint8_t* write_data, MessagePriority priority = MessagePriority::important);
+
+	void async_write_ping();
+
 #pragma endregion
 
 #pragma region STREAMING
@@ -613,7 +617,6 @@ public:
 
 #pragma endregion
 
-	size_t ext_motor_frame_response_count = 0;
 //	std::vector<uint16_t> message_data{};
 	std::array<uint16_t, 32> message_data{};
 private:

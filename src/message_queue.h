@@ -102,6 +102,12 @@ public:
     	return my_transaction.is_ready_to_process();
     }
 
+    /**
+     * @brief Returns true if the last message was succesful and has been handled
+     */
+    bool is_response_handled() {
+    	return my_transaction.is_dequeued() && my_transaction.is_reception_valid();
+    }
 
     /**
      * @brief returns a pointer to the message now removed from the queue
