@@ -29,7 +29,6 @@
 
 #include <stdint.h>
 #include "mb_crc.h"
-
 #include "diagnostics_tracker.h"
 
 /** For Debugging with Iriscontrols **/
