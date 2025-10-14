@@ -108,7 +108,7 @@ namespace DefaultModbusFunctions {
      * @param num_registers The quanity of holding registers to read
 	 * @return An integer - 1 if the transaction is formatted and added to the buffer queue successfuly, 0 if an exception occurs
 	 */
-	Transaction read_holding_registers_fn(uint8_t device_address, uint16_t starting_address, uint16_t num_registers, MessagePriority priority);
+	void read_holding_registers_fn(Transaction* t, uint8_t device_address, uint16_t starting_address, uint16_t num_registers, MessagePriority priority);
 
     /**
 	 * @brief Format a write_single_register request, function code 06, and add the request to the buffer queue
@@ -117,7 +117,7 @@ namespace DefaultModbusFunctions {
      * @param data The value to write to the register
 	 * @return An integer - 1 if the transaction is formatted and added to the buffer queue successfuly, 0 if an exception occurs
 	 */
-	Transaction write_single_register_fn(uint8_t device_address, uint16_t address, uint16_t data, MessagePriority priority);
+	void write_single_register_fn(Transaction* t, uint8_t device_address, uint16_t address, uint16_t data, MessagePriority priority);
 
 	/**
 	 * @brief Format a write_multiple_registers request, function code 16, and add the request to the buffer queue
@@ -127,7 +127,7 @@ namespace DefaultModbusFunctions {
      * @param data An array of data that will be written, in order, to the registers beginning at starting_address
 	 * @return An integer, 1 if the transaction is formatted and added to the buffer queue successfuly, 0 if an exception occurs
 	 */
-	Transaction write_multiple_registers_fn(uint8_t device_address, uint16_t starting_address, uint16_t num_registers, uint8_t* data, MessagePriority priority);
+	void write_multiple_registers_fn(Transaction* t, uint8_t device_address, uint16_t starting_address, uint16_t num_registers, uint8_t* data, MessagePriority priority);
 
 	/**
 	 * @brief Format a read_write_multiple_registers request, function code 23, and add the request to the buffer queue
@@ -139,7 +139,7 @@ namespace DefaultModbusFunctions {
      * @param data An array of data that will be written, in order, to the register(s) beginning at write_start_address
 	 * @return An integer - 1 if the transaction is formatted and added to the buffer queue successfuly, 0 if an exception occurs
 	 */
-	Transaction read_write_multiple_registers_fn(uint8_t device_address,
+	void read_write_multiple_registers_fn(Transaction* t, uint8_t device_address,
 		uint16_t read_starting_address, uint16_t read_num_registers,
 		uint16_t write_starting_address, uint16_t write_num_registers,
 		uint8_t* data, MessagePriority priority);
@@ -150,7 +150,7 @@ namespace DefaultModbusFunctions {
 	 * @param data The data to send and have echoed back from the server device
 	 * @param num_data The quantity of data bytes being added to the transaction
 	*/
-	Transaction return_query_data_fn(uint8_t device_address);
+	void return_query_data_fn(Transaction* t, uint8_t device_address);
 }
 
 namespace ModbusHelpers {

@@ -27,7 +27,7 @@ namespace OrcaModbusFunctions {
      * @param read_reg			The address to start reading the 4 consecutive registers from
 	 * @return 					An integer - 1 if the transaction is formatted and added to the buffer queue successfully, 0 if an exception occurs
 	 */
-	Transaction ext_motor_command_fn(uint8_t device_address, uint8_t mode, uint32_t command, uint16_t read_reg, MessagePriority priority);
+	void ext_motor_command_fn(Transaction* t, uint8_t device_address, uint8_t mode, uint32_t command, uint16_t read_reg, MessagePriority priority);
 	static constexpr int kExtMotorCmdNumRegRead = 2; // How many registers are read per request of this type. This should be even.
 	static_assert(kExtMotorCmdNumRegRead % 2 == 0, "Must read even number of registers in ext_motor_command.");
 

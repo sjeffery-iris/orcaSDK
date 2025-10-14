@@ -627,7 +627,7 @@ private:
 	const uint8_t modbus_server_address;
 	int64_t _time_since_last_response_microseconds;
 
-	void handle_transaction_response(Transaction response);
+	void handle_transaction_response();
 
 	/**
 	 * @brief handle the motor frame transmissions cadence

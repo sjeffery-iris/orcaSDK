@@ -417,7 +417,7 @@ private:
 #elif defined(ATTINY1617)
     uint8_t tx_buffer[64] = { 0 }; //The data to transmit
 #else
-    uint8_t tx_buffer[64] = { 0 }; //The data to transmit
+    uint8_t tx_buffer[256] = { 0 }; //The data to transmit
 #endif
 
     int rx_buffer_size = 0;               //The number of bytes stored in response
@@ -426,7 +426,7 @@ private:
 #elif defined(ATTINY1617)
     uint8_t rx_buffer[64] = { 0 }; //The data to transmit
 #else
-    uint8_t rx_buffer[64] = { 0 }; //The received response to the transmitted request
+    uint8_t rx_buffer[256] = { 0 }; //The received response to the transmitted request
 #endif 
 
     bool important = false;

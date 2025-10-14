@@ -86,7 +86,8 @@ void Actuator::set_streamed_position_um(int32_t position) {
 
 OrcaResult<int32_t> Actuator::read_wide_register_blocking(uint16_t reg_address, MessagePriority priority)
 {
-	modbus_client.enqueue_transaction(DefaultModbusFunctions::read_holding_registers_fn(modbus_server_address, reg_address, 2, priority));
+	DefaultModbusFunctions::read_holding_registers_fn(&modbus_client.my_transaction, modbus_server_address, reg_address, 2, priority);
+	modbus_client.enqueue_transaction();
 	flush();
 	if (message_error) return { 0, message_error };
 	return { combine_into_wide_register(message_data[0], message_data[1]), message_error };
@@ -94,7 +95,8 @@ OrcaResult<int32_t> Actuator::read_wide_register_blocking(uint16_t reg_address, 
 
 OrcaResult<uint16_t> Actuator::read_register_blocking(uint16_t reg_address, MessagePriority priority)
 {
-	modbus_client.enqueue_transaction(DefaultModbusFunctions::read_holding_registers_fn(modbus_server_address, reg_address, 1, priority));
+	DefaultModbusFunctions::read_holding_registers_fn(&modbus_client.my_transaction, modbus_server_address, reg_address, 1, priority);
+	modbus_client.enqueue_transaction();
 //	flush();
 //	if (message_error) return { 0, message_error };
 //	return { message_data[0], message_error};
@@ -114,7 +116,8 @@ OrcaResult<uint16_t> Actuator::read_register_blocking(uint16_t reg_address, Mess
 
 OrcaError Actuator::write_register_blocking(uint16_t reg_address, uint16_t write_data, MessagePriority priority)
 {
-	modbus_client.enqueue_transaction(DefaultModbusFunctions::write_single_register_fn(modbus_server_address, reg_address, write_data, priority));
+	DefaultModbusFunctions::write_single_register_fn(&modbus_client.my_transaction, modbus_server_address, reg_address, write_data, priority);
+	modbus_client.enqueue_transaction();
 	flush();
 	return message_error;
 }
@@ -137,7 +140,8 @@ OrcaError Actuator::write_multiple_registers_blocking(uint16_t reg_start_address
 		data[i * 2] = uint8_t(write_data[i] >> 8);
 		data[i * 2 + 1] = uint8_t(write_data[i]);
 	}
-	modbus_client.enqueue_transaction(DefaultModbusFunctions::write_multiple_registers_fn(modbus_server_address, reg_start_address, num_registers, data, priority));
+	DefaultModbusFunctions::write_multiple_registers_fn(&modbus_client.my_transaction, modbus_server_address, reg_start_address, num_registers, data, priority);
+	modbus_client.enqueue_transaction();
 	flush();
 	return message_error;
 }
@@ -166,29 +170,34 @@ OrcaError Actuator::write_multiple_registers_blocking(uint16_t reg_start_address
 
 void Actuator::async_ext_motor_frame(uint8_t mode, uint32_t command, uint16_t read_reg_address, MessagePriority priority)
 {
-	modbus_client.enqueue_transaction(OrcaModbusFunctions::ext_motor_command_fn(
-		modbus_server_address,
-		mode,
-		command,
-		read_reg_address,
-		priority));
+	OrcaModbusFunctions::ext_motor_command_fn(
+			&modbus_client.my_transaction,
+			modbus_server_address,
+			mode,
+			command,
+			read_reg_address,
+			priority);
+	modbus_client.enqueue_transaction();
 	modbus_client.send_front_message();
 }
 
 void Actuator::async_write_multiple_registers(uint16_t reg_start_address, uint8_t num_registers, uint8_t* write_data, MessagePriority priority)
 {
-	modbus_client.enqueue_transaction(DefaultModbusFunctions::write_multiple_registers_fn(
-			modbus_server_address,
-			reg_start_address,
-			num_registers,
-			write_data,
-			priority));
+	DefaultModbusFunctions::write_multiple_registers_fn(
+				&modbus_client.my_transaction,
+				modbus_server_address,
+				reg_start_address,
+				num_registers,
+				write_data,
+				priority);
+	modbus_client.enqueue_transaction();
 	modbus_client.send_front_message();
 }
 
 void Actuator::async_write_ping()
 {
-	modbus_client.enqueue_transaction(DefaultModbusFunctions::return_query_data_fn(modbus_server_address));
+	DefaultModbusFunctions::return_query_data_fn(&modbus_client.my_transaction, modbus_server_address);
+	modbus_client.enqueue_transaction();
 	modbus_client.send_front_message();
 }
 
@@ -216,19 +225,19 @@ void Actuator::run()
 
 void Actuator::flush()
 {
-	bool current_paused_state = stream_paused;
-	set_stream_paused(true);
-
-	while (modbus_client.get_queue_size() > 0)
-	{
-		modbus_client.send_front_message();
-		modbus_client.receive_blocking();
-
-		Transaction response = modbus_client.dequeue_transaction();
-		handle_transaction_response(response);
-	}
-
-	set_stream_paused(current_paused_state);
+//	bool current_paused_state = stream_paused;
+//	set_stream_paused(true);
+//
+//	while (modbus_client.get_queue_size() > 0)
+//	{
+//		modbus_client.send_front_message();
+//		modbus_client.receive_blocking();
+//
+//		modbus_client.dequeue_transaction();
+//		handle_transaction_response(response);
+//	}
+//
+//	set_stream_paused(current_paused_state);
 }
 
 void Actuator::run_out() {
@@ -241,60 +250,50 @@ void Actuator::run_in() {
 	modbus_client.run_in();
 
 	if (modbus_client.is_response_ready()) {
-		Transaction response = modbus_client.dequeue_transaction();
-		handle_transaction_response(response);
+		modbus_client.dequeue_transaction();
+		handle_transaction_response();
 	}
 }
 
-void Actuator::handle_transaction_response(Transaction response)
+void Actuator::handle_transaction_response()
 {
-//	message_data.clear();
-
-	int ec = response.get_failure_codes();
-
-//	std::stringstream error_message;
-//	if (ec & (1 << Transaction::RESPONSE_TIMEOUT_ERROR)) error_message << "Response timed out, the motor took too long to respond. ";
-//	if (ec & (1 << Transaction::INTERCHAR_TIMEOUT_ERROR)) error_message << "Unexpected interchar delay timeout. ";
-//	if (ec & (1 << Transaction::UNEXPECTED_RESPONDER)) error_message << "Wrong modbus response address. ";
-//	if (ec & (1 << Transaction::CRC_ERROR)) error_message << "Wrong CRC. ";
-//
-//	message_error = OrcaError{response.get_failure_codes(), error_message.str()};
+	int ec = modbus_client.my_transaction.get_failure_codes();
 
 	if (!ec)
 	{
 		_time_since_last_response_microseconds = clock->get_time_microseconds();
 	}
 
-	switch (response.get_rx_function_code()) {
+	switch (modbus_client.my_transaction.get_rx_function_code()) {
 
 	case ModbusFunctionCodes::read_holding_registers:
 	case ModbusFunctionCodes::read_write_multiple_registers: {
 		// add the received data to the local copy of the memory map
 		//u16 register_start_address = (response.get_tx_data()[0] << 8) + response.get_tx_data()[1];
-		uint16_t num_registers = (response.get_tx_data()[2] << 8) + response.get_tx_data()[3];
+		uint16_t num_registers = (modbus_client.my_transaction.get_tx_data()[2] << 8) + modbus_client.my_transaction.get_tx_data()[3];
 		for (int i = 0; i < num_registers; i++) {
-			uint16_t register_data = (response.get_rx_data()[1 + i * 2] << 8) + response.get_rx_data()[2 + i * 2];
+			uint16_t register_data = (modbus_client.my_transaction.get_rx_data()[1 + i * 2] << 8) + modbus_client.my_transaction.get_rx_data()[2 + i * 2];
 //			message_data.push_back(register_data);
 			message_data[i] = register_data;
 		}
 		break;
 	}
 	case motor_command: {
-		uint16_t position_high = (response.get_rx_data()[0] << 8) | response.get_rx_data()[1];
-		uint16_t position_low = (response.get_rx_data()[2] << 8) | response.get_rx_data()[3];
+		uint16_t position_high = (modbus_client.my_transaction.get_rx_data()[0] << 8) | modbus_client.my_transaction.get_rx_data()[1];
+		uint16_t position_low = (modbus_client.my_transaction.get_rx_data()[2] << 8) | modbus_client.my_transaction.get_rx_data()[3];
 		stream_cache.position = combine_into_wide_register(position_low, position_high);
-		uint16_t force_high = (response.get_rx_data()[4] << 8) | response.get_rx_data()[5];
-		uint16_t force_low = (response.get_rx_data()[6] << 8) | response.get_rx_data()[7];
+		uint16_t force_high = (modbus_client.my_transaction.get_rx_data()[4] << 8) | modbus_client.my_transaction.get_rx_data()[5];
+		uint16_t force_low = (modbus_client.my_transaction.get_rx_data()[6] << 8) | modbus_client.my_transaction.get_rx_data()[7];
 		stream_cache.force = combine_into_wide_register(force_low, force_high);
-		stream_cache.power = (response.get_rx_data()[8] << 8) | response.get_rx_data()[9];
-		stream_cache.temperature = (response.get_rx_data()[10]);
-		stream_cache.voltage = (response.get_rx_data()[11] << 8) | response.get_rx_data()[12];
-		stream_cache.errors = (response.get_rx_data()[13] << 8) | response.get_rx_data()[14];
+		stream_cache.power = (modbus_client.my_transaction.get_rx_data()[8] << 8) | modbus_client.my_transaction.get_rx_data()[9];
+		stream_cache.temperature = (modbus_client.my_transaction.get_rx_data()[10]);
+		stream_cache.voltage = (modbus_client.my_transaction.get_rx_data()[11] << 8) | modbus_client.my_transaction.get_rx_data()[12];
+		stream_cache.errors = (modbus_client.my_transaction.get_rx_data()[13] << 8) | modbus_client.my_transaction.get_rx_data()[14];
 		break;
 	}
 	case OrcaFunctionCodes::ext_motor_command: {
 		int idx = 0;
-		uint8_t* d = response.get_rx_data();
+		uint8_t* d = modbus_client.my_transaction.get_rx_data();
 		int32_t force, position, speed, accel;
 		int16_t board_temp, coil_temp;
 		uint16_t vdd, power, mode, kin_status, kin_complete_count, errors, placeholder;

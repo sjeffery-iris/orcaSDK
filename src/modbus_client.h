@@ -27,10 +27,9 @@
 
 #include "serial_interface.h"
 #include "diagnostics_tracker.h"
-#include "message_queue.h"
 #include "../tools/log_interface.h"
 #include "clock.h"
-#include "xil_printf.h"
+#include "transaction.h"
 namespace orcaSDK
 {
 
@@ -95,7 +94,7 @@ public:
      * @brief brings the state machine back to an initial state
      */
     void reset_state () {
-    	messages.reset();
+    	my_transaction.reset_transaction(); // maybe do this?
     	enable_interframe_delay();
     }
 
@@ -114,36 +113,31 @@ public:
     	}
     	// A timer is enabled
     	else {
-            Transaction* active_transaction;
-
 
 			TIMER_ID expired_timer = has_timer_expired();
 			switch (expired_timer) {
 
 			case TIMER_ID::repsonse_timeout:
-                active_transaction = messages.get_active_transaction();
                 diagnostic_counters.increment_diagnostic_counter(return_server_no_response_count);
-				active_transaction->invalidate(Transaction::RESPONSE_TIMEOUT_ERROR);
-                conclude_transaction(active_transaction);
+				my_transaction.invalidate(Transaction::RESPONSE_TIMEOUT_ERROR);
+                conclude_transaction();
 				break;
 
 			case TIMER_ID::interchar_timeout:
-                active_transaction = messages.get_active_transaction();
-
 
 				// If the length was unknown assume this was the expected termination of the response until it is validated
                 // TODO: Remove this once we have good test coverage of different modbus messages. I have reason to believe this never evaluates to true in a system without bugs
-				if( !active_transaction->is_expected_length_known() ){ 
-					active_transaction->validate_response(diagnostic_counters);
+				if( !my_transaction.is_expected_length_known() ){
+					my_transaction.validate_response(diagnostic_counters);
 				}
 				// If the length was known and an interchar timeout occurred (ie the message got messed up)
 				else {
                     diagnostic_counters.increment_diagnostic_counter(unexpected_interchar);
-					active_transaction->invalidate(Transaction::INTERCHAR_TIMEOUT_ERROR);
+                    my_transaction.invalidate(Transaction::INTERCHAR_TIMEOUT_ERROR);
                     diagnostic_counters.increment_diagnostic_counter(ignoring_state_error);
 				}
 
-                conclude_transaction(active_transaction);
+                conclude_transaction();
 				break;
 
 
@@ -173,7 +167,7 @@ public:
     	if ( my_enabled_timer == TIMER_ID::none	|| has_timer_expired() == TIMER_ID::interframe_delay) {
             if (has_timer_expired() == TIMER_ID::interframe_delay) flush_remaining_bytes_from_serial_interface();
     		disable_timer();
-    		if ( messages.available_to_send() ) {
+    		if ( my_transaction.is_queued() ) {
                 if (serial_interface.ready_to_send())
                 {
                     send_front_message();
@@ -185,19 +179,17 @@ public:
     void send_front_message()
     {
         //while there are bytes left to send in the transaction, continue adding them to sendBuf
-        Transaction* active_transaction = messages.get_active_transaction();
+        if (!my_transaction.is_queued()) return;
 
-        if (!active_transaction->is_queued()) return;
-
-        while (active_transaction->bytes_left_to_send()) {
+        while (my_transaction.bytes_left_to_send()) {
             //send the current data byte
-            uint8_t data = active_transaction->pop_tx_buffer();
+            uint8_t data = my_transaction.pop_tx_buffer();
             serial_interface.send_byte(data);
             diagnostic_counters.increment_diagnostic_counter(bytes_out_count);
 
-            if (active_transaction->is_fully_sent()) {
+            if (my_transaction.is_fully_sent()) {
 
-                if (active_transaction->is_broadcast_message()) { //is it a broadcast message?
+                if (my_transaction.is_broadcast_message()) { //is it a broadcast message?
                     enable_turnaround_delay();
                 }
                 else {
@@ -205,9 +197,8 @@ public:
                 }
             }
         }
-        if (logging) log_transaction_transmission(active_transaction);
-        messages.mark_active_message_sent();
-        serial_interface.tx_enable(active_transaction->get_expected_length());		// enabling the transmitter interrupts results in the send() function being called until the active message is fully sent to hardware
+        my_transaction.mark_sent();
+        serial_interface.tx_enable(my_transaction.get_expected_length());		// enabling the transmitter interrupts results in the send() function being called until the active message is fully sent to hardware
         diagnostic_counters.increment_diagnostic_counter(message_sent_count);    //temp? - for frequency benchmarking
 
     }
@@ -233,10 +224,9 @@ public:
 
     /**
      * @brief enqueue a Transaction
-     * @param message should be a populated Transaction object which will be copied into a Transaction in the message queue
     */
-    void enqueue_transaction(Transaction message) {
-        messages.enqueue(message);
+    void enqueue_transaction() {
+        my_transaction.mark_queued();
     }
 
     /**
@@ -244,7 +234,7 @@ public:
      * @return true if the message ready to be claimed
     */
     bool is_response_ready(){
-        return messages.is_response_ready();
+        return my_transaction.is_ready_to_process();
     }
 
     /**
@@ -252,25 +242,16 @@ public:
      * @return true if the message is successful and complete.
     */
     bool is_response_handled() {
-    	return messages.is_response_handled();
+    	return my_transaction.is_dequeued() && my_transaction.is_reception_valid();
     }
 
     /**
      * @brief dequeue a transaction from the message queue
      * @return 0 when dequeue fails, or the address of the dequeued message otherwise
     */
-    Transaction dequeue_transaction(){
-        return messages.dequeue();
+    void dequeue_transaction(){
+        my_transaction.mark_dequeued();
     }
-
-    /**
-    * @brief get number of messages in the queue
-    * @return True if the queue is empty (has no messages), False otherwise.
-    */
-    size_t get_queue_size(){
-        return messages.size();
-    }
-
 
 /////////////////////////////////////////////////////////////
 ///////////////////////////////// Configuration Functions //
@@ -308,21 +289,13 @@ public:
         return clock.get_time_microseconds();
     }
 
-//    void begin_logging(std::shared_ptr<LogInterface> _log)
-//    {
-//        log = _log;
-//        logging = true;
-//    }
-
     DiagnosticsTracker diagnostic_counters;
+
+    Transaction my_transaction; // Public right now because actuator.cpp needs it in handle_transaction_response
 
 private:
     SerialInterface& serial_interface;
     Clock& clock;
-
-//    std::shared_ptr<LogInterface> log;
-
-    MessageQueue messages{ diagnostic_counters };            //!<a buffer for outgoing messages to facilitate timing and order of transmissions and responses
 
     int64_t repsonse_timeout_cycles;
     int64_t interchar_timeout_cycles;
@@ -341,17 +314,14 @@ private:
      *	Transitions to reception when done sending.
      */
     void send(){
-
-		Transaction * active_transaction = messages.get_active_transaction();
-
 		//send the current data byte
-		uint8_t data = active_transaction->pop_tx_buffer();
+		uint8_t data = my_transaction.pop_tx_buffer();
 		serial_interface.send_byte(data);
         diagnostic_counters.increment_diagnostic_counter(bytes_out_count);
 
-		if ( active_transaction->is_fully_sent() ) {
+		if ( my_transaction.is_fully_sent() ) {
 
-			if ( active_transaction->is_broadcast_message() ){ //is it a broadcast message?
+			if ( my_transaction.is_broadcast_message() ){ //is it a broadcast message?
 				enable_turnaround_delay();
 			}else{
 				enable_response_timeout();
@@ -364,23 +334,20 @@ private:
 	 * 		  Example: Call from UART byte received interrupt or when polling the hardware for data in the input fifo
 	 */
 	void receive() {
-//        if (messages.size() == 0) return;
-        
-        Transaction* active_transaction = messages.get_active_transaction();
 
-        bool active = active_transaction->is_active();
+        bool active = my_transaction.is_active();
         if (!active) return;
         while (serial_interface.ready_to_receive())
         {
             uint8_t byte = serial_interface.receive_byte();
-            active_transaction->load_reception(byte); //read the next byte from the receiver buffer. This clears the byte received interrupt    ??TODO: should we be loading here? it seems that in the overrun case we've already walked off the end of the array??
+            my_transaction.load_reception(byte); //read the next byte from the receiver buffer. This clears the byte received interrupt    ??TODO: should we be loading here? it seems that in the overrun case we've already walked off the end of the array??
             diagnostic_counters.increment_diagnostic_counter(bytes_in_count);
 
             // If this was the last character for this message
-            if (active_transaction->received_expected_number_of_bytes())
+            if (my_transaction.received_expected_number_of_bytes())
             {
-                active_transaction->validate_response(diagnostic_counters);// might transition to resting from connected
-                conclude_transaction(active_transaction);
+                my_transaction.validate_response(diagnostic_counters);// might transition to resting from connected
+                conclude_transaction();
 				/* Should be no more valid bytes, flush em */
 				while (serial_interface.ready_to_receive()) {
 					serial_interface.receive_byte();
@@ -473,50 +440,18 @@ private:
 		return TIMER_ID::none;
     }
 
-    void log_transaction_transmission(Transaction* transaction)
-    {
-//        std::stringstream message;
-//        message << clock.get_time_microseconds() << "\ttx";
-//        uint8_t* tx_data = transaction->get_raw_tx_data();
-//        for (int i = 0; i < transaction->get_tx_buffer_size(); i++)
-//        {
-//            message << "\t" << std::setfill('0') << std::setw(2) << std::noshowbase << std::hex << (int)tx_data[i];
-//        }
-//        log->write(message.str());
-    }
-
-    void log_transaction_response(Transaction* transaction)
-    {
-//        std::stringstream message;
-//        message << clock.get_time_microseconds() << "\trx";
-//        uint8_t* rx_data = transaction->get_raw_rx_data();
-//        for (int i = 0; i < transaction->get_rx_buffer_size(); i++)
-//        {
-//            message << "\t" << std::setfill('0') << std::setw(2) << std::noshowbase << std::hex << (int)rx_data[i];
-//        }
-//
-//        uint8_t failure_codes = transaction->get_failure_codes();
-//        if (failure_codes) message << "\t";
-//        if (failure_codes & (1 << Transaction::RESPONSE_TIMEOUT_ERROR)) message << "Timed out. ";
-//        if (failure_codes & (1 << Transaction::INTERCHAR_TIMEOUT_ERROR)) message << "Unexpected interchar. ";
-//        if (failure_codes & (1 << Transaction::UNEXPECTED_RESPONDER)) message << "Wrong address. ";
-//        if (failure_codes & (1 << Transaction::CRC_ERROR)) message << "Wrong CRC. ";
-//
-//        log->write(message.str());
-    }
-
-    void conclude_transaction(Transaction* transaction)
+    void conclude_transaction()
     {
         enable_interframe_delay();
-        if (logging) log_transaction_response(transaction);
-        if ((!transaction->is_reception_valid() || transaction->is_error_response()) && transaction->is_important()) {
-            if (transaction->get_num_retries() < 5)
-            {
-                Transaction retry_transaction;
-                retry_transaction.generate_retry(transaction);
-                messages.insert_next(retry_transaction);
-            }
-        }
+        //TODO: Figure out single transaction retries later
+//        if ((!my_transaction.is_reception_valid() || my_transaction.is_error_response()) && my_transaction.is_important()) {
+//            if (my_transaction.get_num_retries() < 5)
+//            {
+//                Transaction retry_transaction;
+//                retry_transaction.generate_retry(transaction);
+//                messages.insert_next(retry_transaction);
+//            }
+//        }
     }
 
     void flush_remaining_bytes_from_serial_interface()
