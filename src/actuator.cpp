@@ -344,7 +344,7 @@ OrcaResult<uint16_t> Actuator::get_power_W() {
 }
 
 OrcaResult<int16_t> Actuator::get_temperature_C() {
-	OrcaResult<uint16_t> result = read_register_blocking(STATOR_TEMP);
+	OrcaResult<uint16_t> result = read_register_blocking(BOARD_TEMP);
 	return { (int16_t)result.value, result.error };
 }
 

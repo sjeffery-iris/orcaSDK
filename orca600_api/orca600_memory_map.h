@@ -4,23 +4,23 @@
 * @brief Addresses of Orca600 registers
 */
 
-/* This file generated 2024-07-18 1:58:45 PM by memory_map_generator.xlsm */
+/* This file generated 2025-10-14 1:10:57 PM by memory_map_generator.xlsm */
 
 /* NOTE: Registers of width 2 or more that will be accessed by 32 bit pointers MUST begin on an even array index. */
 
 #ifndef ORCA600_MEMORY_MAP_H_
 #define ORCA600_MEMORY_MAP_H_
 
-#define CTRL_REG_0                    0         // CTRL_REG_SECTION     | Width: 1    | Control Register 1
-#define CTRL_REG_1                    1         // CTRL_REG_SECTION     | Width: 1    | Control Register 2
-#define CTRL_REG_2                    2         // CTRL_REG_SECTION     | Width: 1    | Control Register 3
-#define CTRL_REG_3                    3         // CTRL_REG_SECTION     | Width: 1    | Control Register 4
-#define CTRL_REG_4                    4         // CTRL_REG_SECTION     | Width: 1    | Control Register 5
-#define CTRL_REG_5                    5         // CTRL_REG_SECTION     | Width: 1    | Control Register 6
-#define CTRL_REG_6                    6         // CTRL_REG_SECTION     | Width: 1    | Control Register 7
-#define CTRL_REG_7                    7         // CTRL_REG_SECTION     | Width: 1    | Control Register 8
+#define CTRL_REG_0                    0         // CTRL_REG_SECTION     | Width: 1    | Control Register 0
+#define CTRL_REG_1                    1         // CTRL_REG_SECTION     | Width: 1    | Control Register 1
+#define CTRL_REG_2                    2         // CTRL_REG_SECTION     | Width: 1    | Control Register 2
+#define CTRL_REG_3                    3         // CTRL_REG_SECTION     | Width: 1    | Control Register 3
+#define CTRL_REG_4                    4         // CTRL_REG_SECTION     | Width: 1    | Control Register 4
+#define CTRL_REG_5                    5         // CTRL_REG_SECTION     | Width: 1    | Control Register 5
+#define CTRL_REG_6                    6         // CTRL_REG_SECTION     | Width: 1    | Control Register 6
+#define CTRL_REG_7                    7         // CTRL_REG_SECTION     | Width: 1    | Control Register 7
 #define GUI_PERIOD_CMD                8         // CTRL_REG_SECTION     | Width: 1    | Commanded period between IrisControls GUI frames in milliseconds.
-#define KIN_SW_TRIGGER                9         // CTRL_REG_SECTION     | Width: 1    | Software trigger for intiating kinematic movements over Modbus.
+#define KIN_SW_TRIGGER                9         // CTRL_REG_SECTION     | Width: 1    | Software trigger for initiating kinematic movements over Modbus.
 /***********************************************************
  * Non-contiguous addresses. 10 free registers. 10 - 19
  ***********************************************************/
@@ -28,10 +28,10 @@
 #define HBB_DUTY_CMD                  21        // CTRL_REG_SECTION     | Width: 1    | Manual control of Hbridge B duty (-32767 to 32767)
 #define HBC_DUTY_CMD                  22        // CTRL_REG_SECTION     | Width: 1    | Manual control of Hbridge C duty (-32767 to 32767)
 #define HBD_DUTY_CMD                  23        // CTRL_REG_SECTION     | Width: 1    | Manual control of Hbridge D duty (-32767 to 32767)
-#define HBA_CURRENT_CMD               24        // CTRL_REG_SECTION     | Width: 1    | Manual control of Hbridge A current in mA 
-#define HBB_CURRENT_CMD               25        // CTRL_REG_SECTION     | Width: 1    | Manual control of Hbridge B current in mA 
-#define HBC_CURRENT_CMD               26        // CTRL_REG_SECTION     | Width: 1    | Manual control of Hbridge C current in mA 
-#define HBD_CURRENT_CMD               27        // CTRL_REG_SECTION     | Width: 1    | Manual control of Hbridge D current in mA 
+#define HBA_CURRENT_CMD               24        // CTRL_REG_SECTION     | Width: 1    | Manual control of Hbridge A current in mA
+#define HBB_CURRENT_CMD               25        // CTRL_REG_SECTION     | Width: 1    | Manual control of Hbridge B current in mA
+#define HBC_CURRENT_CMD               26        // CTRL_REG_SECTION     | Width: 1    | Manual control of Hbridge C current in mA
+#define HBD_CURRENT_CMD               27        // CTRL_REG_SECTION     | Width: 1    | Manual control of Hbridge D current in mA
 #define FORCE_CMD                     28        // CTRL_REG_SECTION     | Width: 1    | Commanded actuator output force in millinewtons. Lower 2 bytes.
 #define FORCE_CMD_H                   29        // CTRL_REG_SECTION     | Width: 1    | Commanded actuator output force in millinewtons. Upper 2 bytes.
 #define POS_CMD                       30        // CTRL_REG_SECTION     | Width: 1    | Commanded actuator position in micrometers. Lower 2 bytes.
@@ -109,8 +109,9 @@
 #define H7M                           104       // SHAFT_CAL_SECTION    | Width: 1    | Maximum value read by Hall sensor 7.
 #define S45                           105       // SHAFT_CAL_SECTION    | Width: 1    | -
 #define S90                           106       // SHAFT_CAL_SECTION    | Width: 1    | -
+#define SHAFT_ERR_THRESHOLD           107       // SHAFT_CAL_SECTION    | Width: 1    | -
 /***********************************************************
- * Non-contiguous addresses. 5 free registers. 107 - 111
+ * Non-contiguous addresses. 4 free registers. 108 - 111
  ***********************************************************/
 #define FORCE_CAL_VERSION             112       // FORCE_CAL_SECTION    | Width: 1    | Force calibration version.
 #define AAL                           113       // FORCE_CAL_SECTION    | Width: 1    | -
@@ -120,8 +121,9 @@
 #define F30                           117       // FORCE_CAL_SECTION    | Width: 1    | -
 #define F60                           118       // FORCE_CAL_SECTION    | Width: 1    | -
 #define F90                           119       // FORCE_CAL_SECTION    | Width: 1    | -
+#define FTRIM                         120       // FORCE_CAL_SECTION    | Width: 1    | Force trim register. 0 represents a trim value of 1.0, while -32768 to 32767 span [0.95, 1.05]
 /***********************************************************
- * Non-contiguous addresses. 8 free registers. 120 - 127
+ * Non-contiguous addresses. 7 free registers. 121 - 127
  ***********************************************************/
 #define TUNING_VERSION                128       // TUNING_SECTION       | Width: 1    | Tuning calibration version.
 #define CC_PGAIN                      129       // TUNING_SECTION       | Width: 1    | Current controller proportional gain.
@@ -131,7 +133,7 @@
 #define PC_PGAIN                      133       // TUNING_SECTION       | Width: 1    | Position controller proportional gain.
 #define PC_IGAIN                      134       // TUNING_SECTION       | Width: 1    | Position controller integral gain.
 #define PC_DVGAIN                     135       // TUNING_SECTION       | Width: 1    | Position controller velocity gain.
-#define PC_DEGAIN                     136       // TUNING_SECTION       | Width: 1    | Position controller error derivative gain. 
+#define PC_DEGAIN                     136       // TUNING_SECTION       | Width: 1    | Position controller error derivative gain.
 #define PC_FSATU                      137       // TUNING_SECTION       | Width: 1    | Position controller maximum force output. Lower 2 bytes.
 #define PC_FSATU_H                    138       // TUNING_SECTION       | Width: 1    | Position controller maximum force output. Upper 2 bytes.
 #define USER_MAX_TEMP                 139       // TUNING_SECTION       | Width: 1    | User configurable maximum motor temperature before over temperature error in degrees Celsius.
@@ -139,9 +141,15 @@
 #define USER_MAX_FORCE_H              141       // TUNING_SECTION       | Width: 1    | User configurable maximum force output in millinewtons. Upper 2 bytes.
 #define USER_MAX_POWER                142       // TUNING_SECTION       | Width: 1    | User configurable maximum power burn in watts.
 #define SAFETY_DGAIN                  143       // TUNING_SECTION       | Width: 1    | Speed damping gain value used when communications are interrupted.
-#define FORCE_GAIN_CAL                144       // TUNING_SECTION       | Width: 1    | Gain calibration for forces. Fixed point with 10 fractional bits.
 /***********************************************************
- * Non-contiguous addresses. 5 free registers. 145 - 149
+ * Non-contiguous addresses. 1 free registers. 144 - 144
+ ***********************************************************/
+#define CC_DGAIN                      145       // TUNING_SECTION       | Width: 1    | Current controller derivative gain.
+#define CC_D_FILTER                   146       // TUNING_SECTION       | Width: 1    | Current controller derivative gain IIR filter strength. 0-9999
+#define USER_MAX_COIL_TEMP            147       // TUNING_SECTION       | Width: 1    | User configurable maximum coil temperature before over temperature error in degrees Celsius.
+#define TEMP_ERR_HYSTERESIS           148       // TUNING_SECTION       | Width: 1    | User configurable temp error clearing hysteresis. Errors cannot be cleared until temps are < limit - hysteresis.
+/***********************************************************
+ * Non-contiguous addresses. 1 free registers. 149 - 149
  ***********************************************************/
 #define PC_SOFTSTART_PERIOD           150       // TUNING_SECTION       | Width: 1    | Time in ms over which the position controller max force output will ramp from zero any time a mode of operation in which the position controller used is entered
 #define FORCE_UNITS                   151       // TUNING_SECTION       | Width: 1    | Determines whether forces will interpreted  in legacy unitless form or in millinewtons.
@@ -150,9 +158,7 @@
  * Non-contiguous addresses. 7 free registers. 153 - 159
  ***********************************************************/
 #define USR_OPT_VERSION               160       // USER_OPTIONS_SECTION | Width: 1    | User options section version.
-/***********************************************************
- * Non-contiguous addresses. 1 free registers. 161 - 161
- ***********************************************************/
+#define STARTUP_DELAY                 161       // USER_OPTIONS_SECTION | Width: 1    | Startup delay after power on before ORCAbrains starts running.
 #define LOG_PERIOD                    162       // USER_OPTIONS_SECTION | Width: 1    | Period between data log entries.
 #define USER_COMMS_TIMEOUT            163       // USER_OPTIONS_SECTION | Width: 1    | Time between succesful force or position commands before a communications error occurs. In milliseconds.
 #define USR_MB_BAUD_LO                164       // USER_OPTIONS_SECTION | Width: 1    | Default Modbus baudrate low 16 bits. Leaving this register at 0 will use the system default of 19200 bps.
@@ -171,8 +177,15 @@
 #define MB_FORCE_FILTER               175       // USER_OPTIONS_SECTION | Width: 1    | Input filter value for Modbus Force inputs. 0-65535 where 65535 is no filtering.
 #define MB_POS_FILTER                 176       // USER_OPTIONS_SECTION | Width: 1    | Input filter value for Modbus Position inputs. 0-65535 where 65535 is no filtering.
 #define AUTO_ZERO_SPEED_MMPS          177       // USER_OPTIONS_SECTION | Width: 1    | Speed that the Auto Zeroing mode should move the shaft at.
+#define PWM_TIMEOUT_MS                178       // USER_OPTIONS_SECTION | Width: 1    | If the PWM input stays high or low for longer than this time in milliseconds, the motor will enter sleep mode.
+#define PWM_TIME_CONST_MS             179       // USER_OPTIONS_SECTION | Width: 1    | Filter time constant in milliseconds applied to position commands from the PWM input.
+#define PWM_MIN_POS                   180       // USER_OPTIONS_SECTION | Width: 1    | Max motor extension at or below the minimum pulse width. Lower 2 Bytes
+#define PWM_MIN_POS_H                 181       // USER_OPTIONS_SECTION | Width: 1    | Max motor extension at or below the minimum pulse width. Upper 2 Bytes
+#define PWM_MAX_POS                   182       // USER_OPTIONS_SECTION | Width: 1    | Max motor extension at or above the maximum pulse width. Lower 2 Bytes
+#define PWM_MAX_POS_H                 183       // USER_OPTIONS_SECTION | Width: 1    | Max motor extension at or above the maximum pulse width. Upper 2 Bytes
+#define PWM_SERVO_TYPE                184       // USER_OPTIONS_SECTION | Width: 1    | PWM Servo Type . 180 Degree Servo uses 1ms to 2ms pulses. 270 Degree Servo uses 0.5ms to 2.5ms pulses.
 /***********************************************************
- * Non-contiguous addresses. 85 free registers. 178 - 262
+ * Non-contiguous addresses. 78 free registers. 185 - 262
  ***********************************************************/
 #define UART0_UP_RATE                 263       // COUNT_SECTION        | Width: 1    | Number of bytes transmitted in the last second by UART0.
 #define UART1_UP_RATE                 264       // COUNT_SECTION        | Width: 1    | Number of bytes transmitted in the last second by UART1.
@@ -186,8 +199,24 @@
 #define MOTOR_FRAME_COUNT             272       // COUNT_SECTION        | Width: 1    | Number of complete motor frames in the last second.
 #define MB_FREQ                       273       // COUNT_SECTION        | Width: 1    | Number of successful Modbus messages in the last second.
 /***********************************************************
- * Non-contiguous addresses. 39 free registers. 274 - 312
+ * Non-contiguous addresses. 23 free registers. 274 - 296
  ***********************************************************/
+#define H0_QUALITY                    297       // STATUS_SECTION       | Width: 1    |
+#define H1_QUALITY                    298       // STATUS_SECTION       | Width: 1    |
+#define H2_QUALITY                    299       // STATUS_SECTION       | Width: 1    |
+#define H3_QUALITY                    300       // STATUS_SECTION       | Width: 1    |
+#define H4_QUALITY                    301       // STATUS_SECTION       | Width: 1    |
+#define H5_QUALITY                    302       // STATUS_SECTION       | Width: 1    |
+#define H6_QUALITY                    303       // STATUS_SECTION       | Width: 1    |
+#define H7_QUALITY                    304       // STATUS_SECTION       | Width: 1    |
+#define H0M_ACT                       305       // STATUS_SECTION       | Width: 1    |
+#define H1M_ACT                       306       // STATUS_SECTION       | Width: 1    |
+#define H2M_ACT                       307       // STATUS_SECTION       | Width: 1    |
+#define H3M_ACT                       308       // STATUS_SECTION       | Width: 1    |
+#define H4M_ACT                       309       // STATUS_SECTION       | Width: 1    |
+#define H5M_ACT                       310       // STATUS_SECTION       | Width: 1    |
+#define H6M_ACT                       311       // STATUS_SECTION       | Width: 1    |
+#define H7M_ACT                       312       // STATUS_SECTION       | Width: 1    |
 #define GUI_PERIOD                    313       // STATUS_SECTION       | Width: 1    | Period between IrisControls GUI communications in milliseconds.
 #define SHAFT_SIGNAL_STR              314       // STATUS_SECTION       | Width: 1    | -
 #define BS_GAIN_ACT                   315       // STATUS_SECTION       | Width: 1    | Hall sensor analog circuit gain.
@@ -195,14 +224,23 @@
 #define MODE_OF_OPERATION             317       // STATUS_SECTION       | Width: 1    | Active mode the actuator is currently running in.
 #define CALIBRATION_STATUS            318       // STATUS_SECTION       | Width: 1    | A value other than zero indicates a calibration routine is in process.
 #define KINEMATIC_STATUS              319       // STATUS_SECTION       | Width: 1    | Indicates the state of the kinematic controller, and which motion is currently being performed.
-#define FORCE_TARE                    320       // STATUS_SECTION       | Width: 1    | The current value of force tare in mN. Lower 2 bytes.
-#define FORCE_TARE_H                  321       // STATUS_SECTION       | Width: 1    | The current value of force tare in mN. Upper 2 bytes.
-#define CAL_FORCE                     322       // STATUS_SECTION       | Width: 1    | The known force to be used in force gain calibration.
+#define KIN_COMPLETE_COUNT            320       // STATUS_SECTION       | Width: 1    | A counter that will increase every time a kinematic motion has finished.
+#define AUTO_ZERO_STATUS              321       // STATUS_SECTION       | Width: 1    | A bitfield indicating the status of auto zeroing.
 /***********************************************************
- * Non-contiguous addresses. 13 free registers. 323 - 335
+ * Non-contiguous addresses. 6 free registers. 322 - 327
  ***********************************************************/
-#define STATOR_TEMP                   336       // SENSOR_SECTION       | Width: 1    | Temperature of the motor stator in degrees Celsius.
-#define DRIVER_TEMP                   337       // SENSOR_SECTION       | Width: 1    | Temperature of the motor driver in degrees Celsius.
+#define FORCEA                        328       // SENSOR_SECTION       | Width: 1    |
+#define FORCEA_H                      329       // SENSOR_SECTION       | Width: 1    |
+#define FORCEB                        330       // SENSOR_SECTION       | Width: 1    |
+#define FORCEB_H                      331       // SENSOR_SECTION       | Width: 1    |
+#define FORCEC                        332       // SENSOR_SECTION       | Width: 1    |
+#define FORCEC_H                      333       // SENSOR_SECTION       | Width: 1    |
+#define FORCED                        334       // SENSOR_SECTION       | Width: 1    |
+#define FORCED_H                      335       // SENSOR_SECTION       | Width: 1    |
+#define BOARD_TEMP                    336       // SENSOR_SECTION       | Width: 1    | Temperature of the motor driver in degrees Celsius.
+/***********************************************************
+ * Non-contiguous addresses. 1 free registers. 337 - 337
+ ***********************************************************/
 #define VDD_FINAL                     338       // SENSOR_SECTION       | Width: 1    | Motor supply voltage in volts.
 #define SHAFT_PHASE_FINAL             339       // SENSOR_SECTION       | Width: 1    | -
 #define SHAFT_PIXEL                   340       // SENSOR_SECTION       | Width: 1    | -
@@ -223,30 +261,35 @@
 #define AVG_POWER                     355       // SENSOR_SECTION       | Width: 1    | Average sensed actuator output power in watts.
 #define COIL_TEMP                     356       // SENSOR_SECTION       | Width: 1    | Estimated coil temperature in degrees Celsius.
 /***********************************************************
- * Non-contiguous addresses. 7 free registers. 357 - 363
+ * Non-contiguous addresses. 1 free registers. 357 - 357
  ***********************************************************/
-#define RAW_LOCK                      364       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define H0_RAW                        365       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define H1_RAW                        366       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define H2_RAW                        367       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define H3_RAW                        368       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define H4_RAW                        369       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define H5_RAW                        370       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define H6_RAW                        371       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define H7_RAW                        372       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define C0_RAW                        373       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define C1_RAW                        374       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define C2_RAW                        375       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define C3_RAW                        376       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define C4_RAW                        377       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define C5_RAW                        378       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define C6_RAW                        379       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define C7_RAW                        380       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define VDD_RAW                       381       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define T0_RAW                        382       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define T1_RAW                        383       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define T2_RAW                        384       // RAW_SENSOR_SECTION   | Width: 1    | 
-#define T3_RAW                        385       // RAW_SENSOR_SECTION   | Width: 1    | 
+#define SPEED_UMPS                    358       // SENSOR_SECTION       | Width: 1    | Shaft speed in micrometers per second. Lower 2 bytes.
+#define SPEED_UMPS_H                  359       // SENSOR_SECTION       | Width: 1    | Shaft speed in micrometers per second. Upper 2 bytes.
+/***********************************************************
+ * Non-contiguous addresses. 4 free registers. 360 - 363
+ ***********************************************************/
+#define RAW_LOCK                      364       // RAW_SENSOR_SECTION   | Width: 1    |
+#define H0_RAW                        365       // RAW_SENSOR_SECTION   | Width: 1    |
+#define H1_RAW                        366       // RAW_SENSOR_SECTION   | Width: 1    |
+#define H2_RAW                        367       // RAW_SENSOR_SECTION   | Width: 1    |
+#define H3_RAW                        368       // RAW_SENSOR_SECTION   | Width: 1    |
+#define H4_RAW                        369       // RAW_SENSOR_SECTION   | Width: 1    |
+#define H5_RAW                        370       // RAW_SENSOR_SECTION   | Width: 1    |
+#define H6_RAW                        371       // RAW_SENSOR_SECTION   | Width: 1    |
+#define H7_RAW                        372       // RAW_SENSOR_SECTION   | Width: 1    |
+#define C0_RAW                        373       // RAW_SENSOR_SECTION   | Width: 1    |
+#define C1_RAW                        374       // RAW_SENSOR_SECTION   | Width: 1    |
+#define C2_RAW                        375       // RAW_SENSOR_SECTION   | Width: 1    |
+#define C3_RAW                        376       // RAW_SENSOR_SECTION   | Width: 1    |
+#define C4_RAW                        377       // RAW_SENSOR_SECTION   | Width: 1    |
+#define C5_RAW                        378       // RAW_SENSOR_SECTION   | Width: 1    |
+#define C6_RAW                        379       // RAW_SENSOR_SECTION   | Width: 1    |
+#define C7_RAW                        380       // RAW_SENSOR_SECTION   | Width: 1    |
+#define VDD_RAW                       381       // RAW_SENSOR_SECTION   | Width: 1    |
+#define T0_RAW                        382       // RAW_SENSOR_SECTION   | Width: 1    |
+#define T1_RAW                        383       // RAW_SENSOR_SECTION   | Width: 1    |
+#define T2_RAW                        384       // RAW_SENSOR_SECTION   | Width: 1    |
+#define T3_RAW                        385       // RAW_SENSOR_SECTION   | Width: 1    |
 /***********************************************************
  * Non-contiguous addresses. 14 free registers. 386 - 399
  ***********************************************************/
@@ -271,12 +314,13 @@
 #define WARNING                       431       // ERROR_SECTION        | Width: 1    | Active warning flags.
 #define ERROR_0                       432       // ERROR_SECTION        | Width: 1    | Currently active error flags. Only reflects error conditions that have not been cleared.
 #define ERROR_1                       433       // ERROR_SECTION        | Width: 1    | Latched error flags. Reflects all errors that have occurred since reset.
-#define RX_TDRE_ERROR                 434       // ERROR_SECTION        | Width: 1    | 
-#define RX_TC_ERROR                   435       // ERROR_SECTION        | Width: 1    | 
-#define TX_RDRF_ERROR                 436       // ERROR_SECTION        | Width: 1    | 
-#define ADC_DATA_COLLISION            437       // ERROR_SECTION        | Width: 1    | 
+#define RX_TDRE_ERROR                 434       // ERROR_SECTION        | Width: 1    |
+#define RX_TC_ERROR                   435       // ERROR_SECTION        | Width: 1    |
+#define TX_RDRF_ERROR                 436       // ERROR_SECTION        | Width: 1    |
+#define ADC_DATA_COLLISION            437       // ERROR_SECTION        | Width: 1    |
+#define ADC_NOT_DONE                  438       // ERROR_SECTION        | Width: 1    |
 /***********************************************************
- * Non-contiguous addresses. 26 free registers. 438 - 463
+ * Non-contiguous addresses. 25 free registers. 439 - 463
  ***********************************************************/
 #define MB_CNT0                       464       // MODBUS_SECTION       | Width: 1    | Return bus message count. Refer to Modbus specification.
 #define MB_CNT1                       465       // MODBUS_SECTION       | Width: 1    | Return bus communication error. Refer to Modbus specification.
@@ -315,19 +359,19 @@
 #define S0_GAIN_N_MM                  644       // HAPTIC_SECTION       | Width: 1    | Strength of spring force
 #define S0_CENTER_UM                  645       // HAPTIC_SECTION       | Width: 1    | Location of spring center, low 2 bytes
 #define S0_CENTER_UM_H                646       // HAPTIC_SECTION       | Width: 1    | Location of spring center, high 2 bytes
-#define S0_COUPLING                   647       // HAPTIC_SECTION       | Width: 1    | Coupling type, 0 (Both), 1 (Positive), 2 (Negative), 
+#define S0_COUPLING                   647       // HAPTIC_SECTION       | Width: 1    | Coupling type, 0 (Both), 1 (Positive), 2 (Negative),
 #define S0_DEAD_ZONE_MM               648       // HAPTIC_SECTION       | Width: 1    | Zone from center where no spring effect exists
 #define S0_FORCE_SAT_N                649       // HAPTIC_SECTION       | Width: 1    | Maximum force that the spring can output
 #define S1_GAIN_N_MM                  650       // HAPTIC_SECTION       | Width: 1    | Strength of spring force
 #define S1_CENTER_UM                  651       // HAPTIC_SECTION       | Width: 1    | Location of spring center, low 2 bytes
 #define S1_CENTER_UM_H                652       // HAPTIC_SECTION       | Width: 1    | Location of spring center, high 2 bytes
-#define S1_COUPLING                   653       // HAPTIC_SECTION       | Width: 1    | Coupling type, 0 (Both), 1 (Positive), 2 (Negative), 
+#define S1_COUPLING                   653       // HAPTIC_SECTION       | Width: 1    | Coupling type, 0 (Both), 1 (Positive), 2 (Negative),
 #define S1_DEAD_ZONE_MM               654       // HAPTIC_SECTION       | Width: 1    | Zone from center where no spring effect exists
 #define S1_FORCE_SAT_N                655       // HAPTIC_SECTION       | Width: 1    | Maximum force that the spring can output
 #define S2_GAIN_N_MM                  656       // HAPTIC_SECTION       | Width: 1    | Strength of spring force
 #define S2_CENTER_UM                  657       // HAPTIC_SECTION       | Width: 1    | Location of spring center, low 2 bytes
 #define S2_CENTER_UM_H                658       // HAPTIC_SECTION       | Width: 1    | Location of spring center, high 2 bytes
-#define S2_COUPLING                   659       // HAPTIC_SECTION       | Width: 1    | Coupling type, 0 (Both), 1 (Positive), 2 (Negative), 
+#define S2_COUPLING                   659       // HAPTIC_SECTION       | Width: 1    | Coupling type, 0 (Both), 1 (Positive), 2 (Negative),
 #define S2_DEAD_ZONE_MM               660       // HAPTIC_SECTION       | Width: 1    | Zone from center where no spring effect exists
 #define S2_FORCE_SAT_N                661       // HAPTIC_SECTION       | Width: 1    | Maximum force that the spring can output
 #define D0_GAIN_NS_MM                 662       // HAPTIC_SECTION       | Width: 1    | Strength of damping force
@@ -342,15 +386,32 @@
 #define O1_DUTY                       671       // HAPTIC_SECTION       | Width: 1    | Pulse width modulation of signal as a % of duty cycle max value
 #define CONST_FORCE_FILTER            672       // HAPTIC_SECTION       | Width: 1    | Amount of filtering on constant force inputs.
 #define HAPTIC_SOFTSTART              673       // HAPTIC_SECTION       | Width: 1    | Amount of time in milliseconds for force to ramp up upon enabling haptic mode.
+#define FRIC_STATIC                   674       // HAPTIC_SECTION       | Width: 1    | Static friction force in mN. Lower 2 bytes
+#define FRIC_STATIC_H                 675       // HAPTIC_SECTION       | Width: 1    | Static friction force in mN. Upper 2 bytes
+#define FRIC_KINETIC                  676       // HAPTIC_SECTION       | Width: 1    | Kinetic friction force in mN. Lower 2 bytes
+#define FRIC_KINETIC_H                677       // HAPTIC_SECTION       | Width: 1    | Kinetic friction force in mN. Upper 2 bytes
 /***********************************************************
- * Non-contiguous addresses. 81 free registers. 674 - 754
+ * Non-contiguous addresses. 26 free registers. 678 - 703
+ ***********************************************************/
+#define TRIM_VERSION                  704       // SENSOR_TRIM_SECTION  | Width: 1    |
+#define ITRIM0                        705       // SENSOR_TRIM_SECTION  | Width: 1    |
+#define ITRIM1                        706       // SENSOR_TRIM_SECTION  | Width: 1    |
+#define ITRIM2                        707       // SENSOR_TRIM_SECTION  | Width: 1    |
+#define ITRIM3                        708       // SENSOR_TRIM_SECTION  | Width: 1    |
+#define ITRIM4                        709       // SENSOR_TRIM_SECTION  | Width: 1    |
+#define ITRIM5                        710       // SENSOR_TRIM_SECTION  | Width: 1    |
+#define ITRIM6                        711       // SENSOR_TRIM_SECTION  | Width: 1    |
+#define ITRIM7                        712       // SENSOR_TRIM_SECTION  | Width: 1    |
+#define VTRIM                         713       // SENSOR_TRIM_SECTION  | Width: 1    |
+/***********************************************************
+ * Non-contiguous addresses. 41 free registers. 714 - 754
  ***********************************************************/
 #define ILOOP_MSG_FLAG                755       // CURRENT_LOOP_SECTION | Width: 1    | Flag produced by receiving a Seagull modbus command and consumed by the current loop controller
 #define ILOOP_DIN                     756       // CURRENT_LOOP_SECTION | Width: 1    | Status of Ceagle digital inputs. Each input represented by a bit.
 #define ILOOP_OUT_CH1                 757       // CURRENT_LOOP_SECTION | Width: 1    | 4-20 mA output channel 1.
 #define ILOOP_OUT_CH2                 758       // CURRENT_LOOP_SECTION | Width: 1    | 4-20 mA output channel 2.
 #define ILOOP_IN                      759       // CURRENT_LOOP_SECTION | Width: 1    | 4-20 mA input.
-#define ILOOP_SECTION_VERSION         760       // CURRENT_LOOP_SECTION | Width: 1    | 
+#define ILOOP_SECTION_VERSION         760       // CURRENT_LOOP_SECTION | Width: 1    |
 #define ILOOP_CONFIG                  761       // CURRENT_LOOP_SECTION | Width: 1    | Configuration for 4-20mA control.
 #define ILOOP_FORCE_MIN               762       // CURRENT_LOOP_SECTION | Width: 1    | Force that maps to 4 mA. Low 2 bytes. In millinewtons.
 #define ILOOP_FORCE_MIN_HI            763       // CURRENT_LOOP_SECTION | Width: 1    | Force that maps to 4 mA. High 2 bytes. In millinewtons.
@@ -370,42 +431,42 @@
 /***********************************************************
  * Non-contiguous addresses. 1 free registers. 777 - 777
  ***********************************************************/
-#define KINEMATIC_SECTION_VERSION     778       // KINEMATIC_SECTION    | Width: 1    | 
+#define KINEMATIC_SECTION_VERSION     778       // KINEMATIC_SECTION    | Width: 1    |
 /***********************************************************
  * Non-contiguous addresses. 1 free registers. 779 - 779
  ***********************************************************/
-#define KIN_MOTION_0                  780       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_1                  786       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_2                  792       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_3                  798       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_4                  804       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_5                  810       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_6                  816       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_7                  822       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_8                  828       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_9                  834       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_10                 840       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_11                 846       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_12                 852       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_13                 858       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_14                 864       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_15                 870       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_16                 876       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_17                 882       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_18                 888       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_19                 894       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_20                 900       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_21                 906       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_22                 912       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_23                 918       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_24                 924       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_25                 930       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_26                 936       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_27                 942       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_28                 948       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_29                 954       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_30                 960       // KINEMATIC_SECTION    | Width: 6    | 
-#define KIN_MOTION_31                 966       // KINEMATIC_SECTION    | Width: 6    | 
+#define KIN_MOTION_0                  780       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_1                  786       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_2                  792       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_3                  798       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_4                  804       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_5                  810       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_6                  816       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_7                  822       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_8                  828       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_9                  834       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_10                 840       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_11                 846       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_12                 852       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_13                 858       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_14                 864       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_15                 870       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_16                 876       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_17                 882       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_18                 888       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_19                 894       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_20                 900       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_21                 906       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_22                 912       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_23                 918       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_24                 924       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_25                 930       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_26                 936       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_27                 942       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_28                 948       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_29                 954       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_30                 960       // KINEMATIC_SECTION    | Width: 6    |
+#define KIN_MOTION_31                 966       // KINEMATIC_SECTION    | Width: 6    |
 #define KIN_HOME_ID                   972       // KINEMATIC_SECTION    | Width: 1    | ID of kinematic motion triggered when Kinematic mode enabled or when Home signal asserved from Analog interface
 
 
@@ -419,27 +480,26 @@
 #define USR_OPT_REG_START             160
 #define KIN_REG_START                 778
 #define ILOOP_REG_START               760
-#define HAPTIC_REG_START               640
+#define HAPTIC_REG_START              640
+#define TRIM_REG_START                704
 #define STATOR_CAL_REG_SIZE           56
-#define SHAFT_CAL_REG_SIZE            11
-#define FORCE_CAL_REG_SIZE            8
+#define SHAFT_CAL_REG_SIZE            12
+#define FORCE_CAL_REG_SIZE            9
 #define TUNING_REG_SIZE               25
 #define PARAM_REG_SIZE                19
-#define USR_OPT_REG_SIZE              18
+#define USR_OPT_REG_SIZE              25
 #define KIN_REG_SIZE                  195
 #define ILOOP_REG_SIZE                18
-#define HAPTIC_REG_SIZE                34
+#define HAPTIC_REG_SIZE               38
+#define TRIM_REG_SIZE                 10
 #define STATOR_CAL_REG_END            88
-#define SHAFT_CAL_REG_END             106
-#define FORCE_CAL_REG_END             119
+#define SHAFT_CAL_REG_END             107
+#define FORCE_CAL_REG_END             120
 #define TUNING_REG_END                152
 #define PARAM_REG_END                 418
-#define USR_OPT_REG_END               177
+#define USR_OPT_REG_END               184
 #define KIN_REG_END                   972
 #define ILOOP_REG_END                 777
-#define HAPTIC_REG_END                 673
+#define HAPTIC_REG_END                 677
+#define TRIM_REG_END                  713
 #endif
-
-
-
-
