@@ -2,7 +2,6 @@
 //#include "src/SerialASIO.h"
 #undef max
 #undef min
-#include "orca600_api/orca600.h"
 #include "../actuator.h"
 //#include "chrono_clock.h"
 #include "standard_modbus_functions.h"
@@ -379,11 +378,11 @@ OrcaResult<uint16_t> Actuator::get_revision_number() {
 }
 
 OrcaError Actuator::zero_position() {
-	return write_register_blocking(CTRL_REG_0, CONTROL_REG_0::position_zero_flag);
+	return write_register_blocking(CTRL_REG_0, CTRL_REG_0_ZERO_POS_Mask);
 }
 
 OrcaError Actuator::clear_errors() {
-	return write_register_blocking(CTRL_REG_0, CONTROL_REG_0::clear_errors_flag);
+	return write_register_blocking(CTRL_REG_0, CTRL_REG_0_CLEAR_ERR_Mask);
 }
 
 OrcaResult<uint16_t> Actuator::get_latched_errors() {
@@ -423,7 +422,7 @@ void Actuator::tune_position_controller(uint16_t pgain, uint16_t igain, uint16_t
 	};
 
 	write_multiple_registers_blocking(PC_PGAIN, 6, data);
-	write_register_blocking(CONTROL_REG_1::address, CONTROL_REG_1::position_controller_gain_set_flag);
+	write_register_blocking(CTRL_REG_1, CTRL_REG_1_PC_GAIN_APPLY_Mask);
 }
 
 //NEEDS TEST
@@ -440,7 +439,7 @@ OrcaError Actuator::set_kinematic_motion(int8_t ID, int32_t position, int32_t ti
 		uint16_t(delay),
 		uint16_t((type << 1) | (next_id << 3) | auto_next)
 	};
-	return write_multiple_registers_blocking(KIN_MOTION_0 + (6 * ID), 6, data);
+	return write_multiple_registers_blocking(KIN0_POSITION_TARGET + (6 * ID), 6, data);
 }
 
 //NEEDS TEST
