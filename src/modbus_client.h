@@ -242,6 +242,7 @@ public:
      * @return true if the message is successful and complete.
     */
     bool is_response_handled() {
+
     	return my_transaction.is_dequeued() && my_transaction.is_reception_valid();
     }
 

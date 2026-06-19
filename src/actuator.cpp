@@ -180,6 +180,19 @@ void Actuator::async_ext_motor_frame(uint8_t mode, uint32_t command, uint16_t re
 	modbus_client.send_front_message();
 }
 
+void Actuator::async_manage_high_speed(bool connect, uint32_t baud_rate_bps, uint16_t delay_us, MessagePriority priority)
+{
+	OrcaModbusFunctions::baud_rate_negotiate_fn(
+			&modbus_client.my_transaction,
+			modbus_server_address,
+			connect,
+			baud_rate_bps,
+			delay_us,
+			priority);
+	modbus_client.enqueue_transaction();
+	modbus_client.send_front_message();
+}
+
 void Actuator::async_write_multiple_registers(uint16_t reg_start_address, uint8_t num_registers, uint8_t* write_data, MessagePriority priority)
 {
 	DefaultModbusFunctions::write_multiple_registers_fn(

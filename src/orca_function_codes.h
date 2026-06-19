@@ -13,7 +13,8 @@ namespace OrcaFunctionCodes
 	 * @brief Enum of all supported function codes.
 	 */
 	enum function_codes_e {
-		ext_motor_command = 0x66
+		ext_motor_command = 0x66,
+		baud_rate_negotiation = 0x41
 	};
 }
 
@@ -28,6 +29,7 @@ namespace OrcaModbusFunctions {
 	 * @return 					An integer - 1 if the transaction is formatted and added to the buffer queue successfully, 0 if an exception occurs
 	 */
 	void ext_motor_command_fn(Transaction* t, uint8_t device_address, uint8_t mode, uint32_t command, uint16_t read_reg, MessagePriority priority);
+	void baud_rate_negotiate_fn(Transaction* t, uint8_t device_address, bool connect, uint32_t baud_rate_bps, uint16_t delay_us, MessagePriority priority);
 	static constexpr int kExtMotorCmdNumRegRead = 2; // How many registers are read per request of this type. This should be even.
 	static_assert(kExtMotorCmdNumRegRead % 2 == 0, "Must read even number of registers in ext_motor_command.");
 

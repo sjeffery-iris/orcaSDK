@@ -259,6 +259,8 @@ public:
 
 	void async_write_multiple_registers(uint16_t reg_start_address, uint8_t num_registers, uint8_t* write_data, MessagePriority priority = MessagePriority::important);
 
+	void async_manage_high_speed(bool connect, uint32_t baud_rate, uint16_t delay_us, MessagePriority priority = MessagePriority::important);
+
 	void async_write_ping();
 
 #pragma endregion
